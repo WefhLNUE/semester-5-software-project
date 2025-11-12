@@ -1,3 +1,6 @@
 [submodule "employee-profile"]
 	path = employee-profile
 	url = https://github.com/kanzyhany/employee-profile
+[submodule "Leaves"]
+	path = Leaves
+	url = https://github.com/mariamgeorge-git/Leaves.git
