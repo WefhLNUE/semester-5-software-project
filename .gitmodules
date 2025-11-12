@@ -1,0 +1,3 @@
+[submodule "employee-profile"]
+	path = employee-profile
+	url = https://github.com/kanzyhany/employee-profile
