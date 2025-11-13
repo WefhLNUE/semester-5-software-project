@@ -10,3 +10,6 @@
 [submodule "payroll"]
 	path = payroll
 	url = https://github.com/WefhLNUE/payroll
+[submodule "preformance-optimisation"]
+	path = preformance-optimisation
+	url = https://github.com/WefhLNUE/preformance-optimisation
