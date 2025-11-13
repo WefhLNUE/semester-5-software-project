@@ -13,3 +13,6 @@
 [submodule "preformance-optimisation"]
 	path = preformance-optimisation
 	url = https://github.com/WefhLNUE/preformance-optimisation
+[submodule "recruitment"]
+	path = recruitment
+	url = https://github.com/WefhLNUE/recruitment
