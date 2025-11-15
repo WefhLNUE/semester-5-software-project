@@ -4,9 +4,6 @@
 [submodule "payroll"]
 	path = payroll
 	url = https://github.com/WefhLNUE/payroll
-[submodule "preformance-optimisation"]
-	path = preformance-optimisation
-	url = https://github.com/WefhLNUE/preformance-optimisation
 [submodule "leaves-subsystem"]
 	path = leaves-subsystem
 	url = https://github.com/WefhLNUE/leaves-subsystem
