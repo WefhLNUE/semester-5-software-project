@@ -1,6 +1,3 @@
-[submodule "Organization_Structure"]
-	path = Organization_Structure
-	url = https://github.com/WefhLNUE/Organization_Structure
 [submodule "payroll"]
 	path = payroll
 	url = https://github.com/WefhLNUE/payroll
