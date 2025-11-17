@@ -1,6 +1,6 @@
-[submodule "payroll"]
-	path = payroll
-	url = https://github.com/WefhLNUE/payroll
+[submodule "payroll-tracking"]
+	path = payroll-tracking
+	url = https://github.com/WefhLNUE/payroll-tracking
 [submodule "leaves-subsystem"]
 	path = leaves-subsystem
 	url = https://github.com/WefhLNUE/leaves-subsystem
