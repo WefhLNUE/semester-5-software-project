@@ -1,9 +1,9 @@
 [submodule "payroll-tracking"]
 	path = src/payroll-tracking
 	url = https://github.com/WefhLNUE/src/payroll-tracking
-[submodule "leaves-subsystem"]
-	path = src/leaves-subsystem
-	url = https://github.com/WefhLNUE/src/leaves-subsystem
+[submodule "leaves"]
+	path = src/leaves
+	url = https://github.com/WefhLNUE/src/leaves
 [submodule "employee-profile"]
 	path = src/employee-profile
 	url = https://github.com/WefhLNUE/src/employee-profile
