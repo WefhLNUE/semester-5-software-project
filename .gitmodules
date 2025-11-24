@@ -4,3 +4,24 @@
 [submodule "src/organization-structure"]
 	path = src/organization-structure
 	url = https://github.com/WefhLNUE/organization-structure
+[submodule "src/payroll-tracking"]
+	path = src/payroll-tracking
+	url = https://github.com/WefhLNUE/payroll-tracking
+[submodule "src/leaves"]
+	path = src/leaves
+	url = https://github.com/WefhLNUE/leaves
+[submodule "src/employee-profile"]
+	path = src/employee-profile
+	url = https://github.com/WefhLNUE/employee-profile
+[submodule "src/time-management"]
+	path = src/time-management
+	url = https://github.com/WefhLNUE/time-management
+[submodule "src/recruitment"]
+	path = src/recruitment
+	url = https://github.com/WefhLNUE/recruitment
+[submodule "src/payroll-configuration"]
+	path = src/payroll-configuration
+	url = https://github.com/WefhLNUE/payroll-configuration
+[submodule "src/payroll-execution"]
+	path = src/payroll-execution
+	url = https://github.com/WefhLNUE/payroll-execution
