@@ -5,38 +5,56 @@ import {
   ForbiddenException,
 } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
-import { ROLES_KEY } from "../decorator/roles.decorator"; // 👈 FIX
+import { ROLES_KEY } from "../decorator/roles.decorator";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-    constructor(private reflector: Reflector) {}
+  constructor(private reflector: Reflector) {}
+    
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log("🔥 RolesGuard running!");
 
-    async canActivate(context: ExecutionContext): Promise<boolean> {
-        // 1. Read required roles from metadata (now using ROLES_KEY)
-        const requiredRoles = this.reflector.getAllAndOverride<string[]>(
-            ROLES_KEY,
-            [context.getHandler(), context.getClass()]
-        );
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()]
+    );
 
-        // If no roles required → allow access
-        if (!requiredRoles) return true;
+    console.log("\n===== ROLE GUARD =====");
+    console.log("Required roles:", requiredRoles);
 
-        // 2. Extract authenticated user from request
-        const request = context.switchToHttp().getRequest();
-        const user = request.user;
-
-        if (!user) return false;
-
-        // 3. Extract user roles (from JWT payload)
-        const userRoles: string[] = user.roles ?? [];
-
-        // 4. Check ANY intersection
-        const hasRole = requiredRoles.some(role => userRoles.includes(role));
-
-        if (!hasRole) {
-            throw new ForbiddenException("You do not have permission");
-        }
-
-        return true;
+    if (!requiredRoles) {
+      console.log("No roles required → ALLOW");
+      return true;
     }
+
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+
+    console.log("User object:", user);
+
+    if (!user) {
+      console.log("❌ No user in request → 401");
+      return false;
+    }
+
+    // Make roles case insensitive
+    const userRoles = (user.roles || []).map(r => r.toLowerCase());
+    const required = requiredRoles.map(r => r.toLowerCase());
+
+    console.log("Normalized user roles:", userRoles);
+    console.log("Normalized required roles:", required);
+
+    const hasRole = required.some(role => userRoles.includes(role));
+
+    console.log("Has required role?", hasRole);
+
+    if (!hasRole) {
+      throw new ForbiddenException(
+        `You do not have permission. Needed: ${requiredRoles}, you have: ${user.roles}`
+      );
+    }
+
+    console.log("✔ ACCESS GRANTED ✔");
+    return true;
+  }
 }

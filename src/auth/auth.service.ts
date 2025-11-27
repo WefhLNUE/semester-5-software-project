@@ -6,6 +6,8 @@ import * as bcrypt from 'bcryptjs';
 
 import { EmployeeProfile } from '../employee-profile/models/employee-profile.schema';
 import { EmployeeSystemRole } from '../employee-profile/models/employee-system-role.schema';
+import { RegisterEmployeeDto } from '../employee-profile/dto/register-employee.dto';
+import { EmployeeProfileService } from '../employee-profile/employee-profile.service';
 
 type EmployeeDocument = HydratedDocument<EmployeeProfile>;
 type RoleDocument = HydratedDocument<EmployeeSystemRole>;
@@ -13,14 +15,45 @@ type RoleDocument = HydratedDocument<EmployeeSystemRole>;
 @Injectable()
 export class AuthService {
     constructor(
-        private readonly jwtService: JwtService,
+  private readonly jwtService: JwtService,
 
-        @InjectModel(EmployeeProfile.name)
-        private readonly employeeModel: Model<EmployeeProfile>,
+  @InjectModel(EmployeeProfile.name)
+  private readonly employeeModel: Model<EmployeeProfile>,
 
-        @InjectModel(EmployeeSystemRole.name)
-        private readonly employeeRoleModel: Model<EmployeeSystemRole>,
-    ) {}
+  @InjectModel(EmployeeSystemRole.name)
+  private readonly employeeRoleModel: Model<EmployeeSystemRole>,
+
+  private readonly employeeProfileService: EmployeeProfileService, // MUST be last
+) {}
+
+
+    async register(dto: RegisterEmployeeDto) {
+    // create employee with auto-generated employeeNumber
+    const employee = await this.employeeProfileService.createEmployee(dto);
+
+    // attach system role
+    const roleDoc = await this.employeeRoleModel.create({
+        employeeProfileId: employee._id,
+        roles: dto.roles ?? [],
+        permissions: dto.permissions ?? [],
+    });
+
+    // sign jwt
+    const payload = {
+        sub: employee._id,
+        workEmail: employee.workEmail,
+        roles: roleDoc.roles,
+    };
+
+    const accessToken = this.jwtService.sign(payload);
+
+    return {
+        accessToken,
+        user: employee,
+    };
+}
+
+
 
     //LOGIN → returns JWT
     async login(user: EmployeeDocument & { systemRole: RoleDocument | null }) {
@@ -48,9 +81,9 @@ export class AuthService {
 
         // Load roles
         const systemRole = await this.employeeRoleModel.findOne({
-        employeeProfileId: employee._id,
-        isActive: true,
+            employeeProfileId: employee._id,
         });
+        console.log("VALIDATE EMPLOYEE - systemRole =", systemRole);
 
         // Return hydrated document + role
         return Object.assign(employee, { systemRole });
