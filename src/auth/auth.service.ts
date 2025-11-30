@@ -4,8 +4,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, HydratedDocument } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
 
-import { EmployeeProfile } from '../employee-profile/models/employee-profile.schema';
-import { EmployeeSystemRole } from '../employee-profile/models/employee-system-role.schema';
+import { EmployeeProfile } from '../employee-profile/Models/employee-profile.schema';
+import { EmployeeSystemRole } from '../employee-profile/Models/employee-system-role.schema';
 import { RegisterEmployeeDto } from '../employee-profile/dto/register-employee.dto';
 import { EmployeeProfileService } from '../employee-profile/employee-profile.service';
 import { permission } from 'process';

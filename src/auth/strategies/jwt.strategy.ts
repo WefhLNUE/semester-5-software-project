@@ -4,8 +4,8 @@ import { ExtractJwt, Strategy, StrategyOptionsWithRequest } from 'passport-jwt';
 import { Request } from 'express';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { EmployeeProfile } from '../../employee-profile/models/employee-profile.schema';
-import { EmployeeSystemRole } from '../../employee-profile/models/employee-system-role.schema';
+import { EmployeeProfile } from '../../employee-profile/Models/employee-profile.schema';
+import { EmployeeSystemRole } from '../../employee-profile/Models/employee-system-role.schema';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()

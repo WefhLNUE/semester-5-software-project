@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 import { RecruitmentModule } from './recruitment/recruitment.module';
 import { LeavesModule } from './leaves/leaves.module';
 import { AuthModule } from './auth/auth.module';
-import { EmployeeProfile, EmployeeProfileSchema } from './employee-profile/models/employee-profile.schema';
+import { EmployeeProfile, EmployeeProfileSchema } from './employee-profile/Models/employee-profile.schema';
 import * as dotenv from 'dotenv';
 dotenv.config();
 

@@ -12,12 +12,12 @@ import { EmployeeProfileModule } from '../employee-profile/employee-profile.modu
 import {
   EmployeeProfile,
   EmployeeProfileSchema,
-} from '../employee-profile/models/employee-profile.schema';
+} from '../employee-profile/Models/employee-profile.schema';
 
 import {
   EmployeeSystemRole,
   EmployeeSystemRoleSchema,
-} from '../employee-profile/models/employee-system-role.schema';
+} from '../employee-profile/Models/employee-system-role.schema';
 import { RolesGuard } from './guards/roles.guard';
 
 @Module({
