@@ -1,27 +1,27 @@
-[submodule "src/performance"]
-	path = src/performance
+[submodule "backend/src/performance"]
+	path = backend/src/performance
 	url = https://github.com/WefhLNUE/performance
-[submodule "src/organization-structure"]
-	path = src/organization-structure
+[submodule "backend/src/organization-structure"]
+	path = backend/src/organization-structure
 	url = https://github.com/WefhLNUE/organization-structure
-[submodule "src/payroll-tracking"]
-	path = src/payroll-tracking
+[submodule "backend/src/payroll-tracking"]
+	path = backend/src/payroll-tracking
 	url = https://github.com/WefhLNUE/payroll-tracking
-[submodule "src/leaves"]
-	path = src/leaves
+[submodule "backend/src/leaves"]
+	path = backend/src/leaves
 	url = https://github.com/WefhLNUE/leaves
-[submodule "src/employee-profile"]
-	path = src/employee-profile
+[submodule "backend/src/employee-profile"]
+	path = backend/src/employee-profile
 	url = https://github.com/WefhLNUE/employee-profile
-[submodule "src/time-management"]
-	path = src/time-management
+[submodule "backend/src/time-management"]
+	path = backend/src/time-management
 	url = https://github.com/WefhLNUE/time-management
-[submodule "src/recruitment"]
-	path = src/recruitment
+[submodule "backend/src/recruitment"]
+	path = backend/src/recruitment
 	url = https://github.com/WefhLNUE/recruitment
-[submodule "src/payroll-configuration"]
-	path = src/payroll-configuration
+[submodule "backend/src/payroll-configuration"]
+	path = backend/src/payroll-configuration
 	url = https://github.com/WefhLNUE/payroll-configuration
-[submodule "src/payroll-execution"]
-	path = src/payroll-execution
+[submodule "backend/src/payroll-execution"]
+	path = backend/src/payroll-execution
 	url = https://github.com/WefhLNUE/payroll-execution
