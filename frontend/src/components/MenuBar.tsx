@@ -2,22 +2,34 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type NavItem = {
   label: string;
   href: string;
   moduleColorVar?: string;
+  requiresAuth?: boolean;
 };
 
 const navItems: NavItem[] = [
   { label: "Home", href: "/" },
-  { label: "Employee Profile", href: "/employee-profile", moduleColorVar: "--employee-profile" },
-  { label: "Leaves", href: "/leaves", moduleColorVar: "--leaves" },
-  { label: "Organization", href: "/organization-structure", moduleColorVar: "--org-structure" },
-  { label: "Performance", href: "/performance", moduleColorVar: "--performance" },
-  { label: "Time", href: "/time-management", moduleColorVar: "--time-management" },
-  { label: "Recruitment", href: "/recruitment", moduleColorVar: "--recruitment" },
-  { label: "Payroll", href: "/payroll-tracking", moduleColorVar: "--payroll" },
+  {
+    label: "Employee Profile",
+    href: "/employee-profile",
+    moduleColorVar: "--employee-profile",
+    requiresAuth: true,
+  },
+  { label: "Leaves", href: "/leaves", moduleColorVar: "--leaves", requiresAuth: true },
+  {
+    label: "Organization",
+    href: "/organization-structure",
+    moduleColorVar: "--org-structure",
+    requiresAuth: true,
+  },
+  { label: "Performance", href: "/performance", moduleColorVar: "--performance", requiresAuth: true },
+  { label: "Time", href: "/time-management", moduleColorVar: "--time-management", requiresAuth: true },
+  { label: "Recruitment", href: "/recruitment", moduleColorVar: "--recruitment", requiresAuth: true },
+  { label: "Payroll", href: "/payroll-tracking", moduleColorVar: "--payroll", requiresAuth: true },
 ];
 
 function isActivePath(pathname: string, href: string) {
@@ -27,6 +39,22 @@ function isActivePath(pathname: string, href: string) {
 
 export default function MenuBar() {
   const pathname = usePathname();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(Boolean(localStorage.getItem("token")));
+
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === "token") {
+        setIsAuthenticated(Boolean(localStorage.getItem("token")));
+      }
+    };
+
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, [pathname]);
+
+  const visibleNavItems = isAuthenticated ? navItems : navItems.filter((item) => !item.requiresAuth);
 
   return (
     <header
@@ -67,7 +95,7 @@ export default function MenuBar() {
             whiteSpace: "nowrap",
           }}
         >
-          {navItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const active = isActivePath(pathname, item.href);
             const activeColor = item.moduleColorVar
               ? `var(${item.moduleColorVar})`
@@ -92,6 +120,23 @@ export default function MenuBar() {
               </Link>
             );
           })}
+
+          {!isAuthenticated && (
+            <Link
+              href="/login"
+              style={{
+                textDecoration: "none",
+                borderRadius: "0.5rem",
+                padding: "0.5rem 0.9rem",
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                backgroundColor: "var(--primary-700)",
+                color: "white",
+              }}
+            >
+              Login
+            </Link>
+          )}
         </div>
       </nav>
     </header>
