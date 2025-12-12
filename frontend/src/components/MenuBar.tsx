@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type NavItem = {
@@ -39,7 +39,14 @@ function isActivePath(pathname: string, href: string) {
 
 export default function MenuBar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    router.replace("/login");
+  };
 
   useEffect(() => {
     setIsAuthenticated(Boolean(localStorage.getItem("token")));
@@ -136,6 +143,25 @@ export default function MenuBar() {
             >
               Login
             </Link>
+          )}
+
+          {isAuthenticated && (
+            <button
+              type="button"
+              onClick={handleLogout}
+              style={{
+                border: "none",
+                cursor: "pointer",
+                borderRadius: "0.5rem",
+                padding: "0.5rem 0.9rem",
+                fontSize: "0.875rem",
+                fontWeight: 600,
+                backgroundColor: "transparent",
+                color: "var(--text-secondary)",
+              }}
+            >
+              Logout
+            </button>
           )}
         </div>
       </nav>
