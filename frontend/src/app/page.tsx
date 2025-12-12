@@ -1,46 +1,80 @@
 import Link from "next/link";
-
 export default function Home() {
   return (
-    <div className="relative">
+    <div style={{ position: "relative" }}>
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10"
         style={{
+          pointerEvents: "none",
+          position: "fixed",
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          zIndex: -10,
           background:
             "radial-gradient(1000px 600px at 15% 10%, rgba(59,130,246,0.20), transparent 60%), radial-gradient(800px 500px at 85% 20%, rgba(34,197,94,0.18), transparent 55%), radial-gradient(700px 600px at 50% 100%, rgba(99,102,241,0.14), transparent 60%)",
         }}
       />
 
-      <section className="relative overflow-hidden">
-        <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 sm:py-20 lg:grid-cols-2 lg:items-center">
-          <div className="space-y-6">
+      <section style={{ position: "relative", overflow: "hidden" }}>
+        <div
+          style={{
+            maxWidth: "80rem",
+            margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
+            gap: "2.5rem",
+            padding: "3.5rem 1.5rem",
+            alignItems: "center",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             <div
-              className="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold"
               style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                borderRadius: "9999px",
+                borderWidth: "1px",
+                borderStyle: "solid",
+                padding: "0.25rem 0.75rem",
+                fontSize: "0.75rem",
+                fontWeight: 600,
                 borderColor: "var(--border-light)",
                 backgroundColor: "var(--bg-primary)",
                 color: "var(--text-secondary)",
                 boxShadow: "var(--shadow-sm)",
               }}
             >
-              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: "var(--primary-600)" }} />
+              <span
+                style={{
+                  width: "0.5rem",
+                  height: "0.5rem",
+                  borderRadius: "9999px",
+                  backgroundColor: "var(--primary-600)",
+                }}
+              />
               All-in-one HR System
             </div>
 
-            <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 style={{ fontSize: "2.5rem", fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1.15 }}>
               Run HR operations with clarity, speed, and confidence.
             </h1>
 
             <p
-              className="max-w-xl text-base leading-relaxed sm:text-lg"
-              style={{ color: "var(--text-secondary)" }}
+              style={{
+                maxWidth: "36rem",
+                fontSize: "1.0625rem",
+                lineHeight: 1.65,
+                color: "var(--text-secondary)",
+              }}
             >
               Manage employee profiles, recruitment, leaves, payroll, performance, and time tracking in one
               consistent experience.
             </p>
 
-            <div className="flex flex-wrap items-center gap-3">
+            <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.75rem" }}>
               <Link href="/employee-profile" className="btn-primary">
                 Get started
               </Link>
@@ -49,45 +83,68 @@ export default function Home() {
               </Link>
             </div>
 
-            <div className="grid gap-3 pt-4 sm:grid-cols-3">
-              <div className="card p-4">
-                <div className="text-xs font-semibold" style={{ color: "var(--text-tertiary)" }}>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+                gap: "0.75rem",
+                paddingTop: "1rem",
+              }}
+            >
+              <div className="card" style={{ padding: "1rem" }}>
+                <div style={{ color: "var(--text-tertiary)", fontSize: "0.75rem", fontWeight: 600 }}>
                   Secure & structured
                 </div>
-                <div className="mt-1 text-sm font-semibold">Role-based modules</div>
+                <div style={{ marginTop: "0.25rem", fontSize: "0.875rem", fontWeight: 600 }}>
+                  Role-based modules
+                </div>
               </div>
-              <div className="card p-4">
-                <div className="text-xs font-semibold" style={{ color: "var(--text-tertiary)" }}>
+              <div className="card" style={{ padding: "1rem" }}>
+                <div style={{ color: "var(--text-tertiary)", fontSize: "0.75rem", fontWeight: 600 }}>
                   Clear workflows
                 </div>
-                <div className="mt-1 text-sm font-semibold">Approvals and tracking</div>
+                <div style={{ marginTop: "0.25rem", fontSize: "0.875rem", fontWeight: 600 }}>
+                  Approvals and tracking
+                </div>
               </div>
-              <div className="card p-4">
-                <div className="text-xs font-semibold" style={{ color: "var(--text-tertiary)" }}>
+              <div className="card" style={{ padding: "1rem" }}>
+                <div style={{ color: "var(--text-tertiary)", fontSize: "0.75rem", fontWeight: 600 }}>
                   Modern UI
                 </div>
-                <div className="mt-1 text-sm font-semibold">Fast, responsive pages</div>
+                <div style={{ marginTop: "0.25rem", fontSize: "0.875rem", fontWeight: 600 }}>
+                  Fast, responsive pages
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: "1rem",
+            }}
+          >
             <div className="stat-card">
-              <div className="text-xs font-semibold opacity-90">Employee profiles</div>
-              <div className="mt-2 text-2xl font-semibold">Centralized data</div>
-              <div className="mt-2 text-sm opacity-90">Keep everything from contact info to history in one place.</div>
+              <div style={{ fontSize: "0.75rem", fontWeight: 600, opacity: 0.9 }}>Employee profiles</div>
+              <div style={{ marginTop: "0.5rem", fontSize: "1.5rem", fontWeight: 600 }}>Centralized data</div>
+              <div style={{ marginTop: "0.5rem", fontSize: "0.875rem", opacity: 0.9 }}>
+                Keep everything from contact info to history in one place.
+              </div>
             </div>
 
             <div className="stat-card stat-card-success">
-              <div className="text-xs font-semibold opacity-90">Leave management</div>
-              <div className="mt-2 text-2xl font-semibold">Fewer errors</div>
-              <div className="mt-2 text-sm opacity-90">Track balances and requests with clear statuses.</div>
+              <div style={{ fontSize: "0.75rem", fontWeight: 600, opacity: 0.9 }}>Leave management</div>
+              <div style={{ marginTop: "0.5rem", fontSize: "1.5rem", fontWeight: 600 }}>Fewer errors</div>
+              <div style={{ marginTop: "0.5rem", fontSize: "0.875rem", opacity: 0.9 }}>
+                Track balances and requests with clear statuses.
+              </div>
             </div>
 
-            <div className="stat-card stat-card-warning sm:col-span-2">
-              <div className="text-xs font-semibold opacity-90">Recruitment pipeline</div>
-              <div className="mt-2 text-2xl font-semibold">From opening to hire</div>
-              <div className="mt-2 text-sm opacity-90">
+            <div className="stat-card stat-card-warning" style={{ gridColumn: "1 / -1" }}>
+              <div style={{ fontSize: "0.75rem", fontWeight: 600, opacity: 0.9 }}>Recruitment pipeline</div>
+              <div style={{ marginTop: "0.5rem", fontSize: "1.5rem", fontWeight: 600 }}>From opening to hire</div>
+              <div style={{ marginTop: "0.5rem", fontSize: "0.875rem", opacity: 0.9 }}>
                 Keep candidates organized, move faster, and maintain visibility across stages.
               </div>
             </div>
@@ -95,39 +152,45 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 pb-10">
+      <section style={{ maxWidth: "80rem", margin: "0 auto", padding: "0 1.5rem 2.5rem" }}>
         <div
-          className="grid gap-4 rounded-2xl border p-6 sm:grid-cols-3"
           style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "1rem",
+            borderRadius: "1rem",
+            borderWidth: "1px",
+            borderStyle: "solid",
+            padding: "1.5rem",
             borderColor: "var(--border-light)",
             backgroundColor: "rgba(255, 255, 255, 0.75)",
             backdropFilter: "blur(10px)",
             boxShadow: "var(--shadow-sm)",
           }}
         >
-          <div className="space-y-2">
-            <div className="text-sm font-semibold" style={{ color: "var(--employee-profile)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <div style={{ color: "var(--employee-profile)", fontSize: "0.875rem", fontWeight: 600 }}>
               Employee Profile
             </div>
-            <div className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            <div style={{ color: "var(--text-secondary)", fontSize: "0.875rem" }}>
               Manage employee records with clean, consistent data.
             </div>
           </div>
 
-          <div className="space-y-2">
-            <div className="text-sm font-semibold" style={{ color: "var(--leaves)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <div style={{ color: "var(--leaves)", fontSize: "0.875rem", fontWeight: 600 }}>
               Leaves
             </div>
-            <div className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            <div style={{ color: "var(--text-secondary)", fontSize: "0.875rem" }}>
               Requests, approvals, balances, and statuses in one flow.
             </div>
           </div>
 
-          <div className="space-y-2">
-            <div className="text-sm font-semibold" style={{ color: "var(--recruitment)" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <div style={{ color: "var(--recruitment)", fontSize: "0.875rem", fontWeight: 600 }}>
               Recruitment
             </div>
-            <div className="text-sm" style={{ color: "var(--text-secondary)" }}>
+            <div style={{ color: "var(--text-secondary)", fontSize: "0.875rem" }}>
               Create openings, track candidates, and move efficiently.
             </div>
           </div>
@@ -135,14 +198,35 @@ export default function Home() {
       </section>
 
       <footer
-        className="border-t"
-        style={{ borderColor: "var(--border-light)", backgroundColor: "var(--bg-primary)" }}
+        style={{
+          borderTop: "1px solid var(--border-light)",
+          backgroundColor: "var(--bg-primary)",
+        }}
       >
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-6 py-8 sm:flex-row sm:items-center sm:justify-between">
-          <div className="text-sm" style={{ color: "var(--text-secondary)" }}>
+        <div
+          style={{
+            maxWidth: "80rem",
+            margin: "0 auto",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "0.75rem",
+            padding: "2rem 1.5rem",
+          }}
+        >
+          <div style={{ color: "var(--text-secondary)", fontSize: "0.875rem" }}>
             © {new Date().getFullYear()} HR System
           </div>
-          <div className="flex flex-wrap items-center gap-3 text-sm">
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: "0.75rem",
+              fontSize: "0.875rem",
+            }}
+          >
             <Link href="/" style={{ color: "var(--text-link)" }}>
               Home
             </Link>

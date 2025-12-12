@@ -29,17 +29,44 @@ export default function MenuBar() {
   const pathname = usePathname();
 
   return (
-    <header className="navbar sticky top-0 z-50">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-6">
+    <header
+      className="navbar"
+      style={{ position: "sticky", top: 0, zIndex: 50 }}
+    >
+      <nav
+        style={{
+          maxWidth: "80rem",
+          margin: "0 auto",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "1.5rem",
+        }}
+      >
         <Link
           href="/"
-          className="text-lg font-semibold"
-          style={{ color: "var(--text-primary)" }}
+          style={{
+            color: "var(--text-primary)",
+            fontSize: "1.125rem",
+            fontWeight: 600,
+            textDecoration: "none",
+            whiteSpace: "nowrap",
+          }}
         >
           HR System
         </Link>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "nowrap",
+            alignItems: "center",
+            gap: "0.5rem",
+            overflowX: "auto",
+            maxWidth: "100%",
+            whiteSpace: "nowrap",
+          }}
+        >
           {navItems.map((item) => {
             const active = isActivePath(pathname, item.href);
             const activeColor = item.moduleColorVar
@@ -50,8 +77,13 @@ export default function MenuBar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-md px-3 py-2 text-sm font-medium transition-colors"
                 style={{
+                  textDecoration: "none",
+                  borderRadius: "0.375rem",
+                  padding: "0.5rem 0.75rem",
+                  fontSize: "0.875rem",
+                  fontWeight: 500,
+                  transition: "background-color 0.2s ease, color 0.2s ease",
                   color: active ? activeColor : "var(--text-secondary)",
                   backgroundColor: active ? "var(--bg-selected)" : "transparent",
                 }}

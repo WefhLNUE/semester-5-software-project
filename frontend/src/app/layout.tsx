@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import "../../main-theme.css";
 import MenuBar from "@/components/MenuBar";
 
@@ -25,10 +24,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" style={{ height: "100%" }}>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
-        style={{ backgroundColor: "var(--bg-secondary)", color: "var(--text-primary)" }}
+        className={`${geistSans.variable} ${geistMono.variable}`}
+        style={{
+          margin: 0,
+          minHeight: "100vh",
+          WebkitFontSmoothing: "antialiased",
+          MozOsxFontSmoothing: "grayscale",
+          backgroundColor: "var(--bg-secondary)",
+          color: "var(--text-primary)",
+        }}
       >
         <MenuBar />
         <main>{children}</main>
