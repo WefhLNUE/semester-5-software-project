@@ -96,6 +96,7 @@ export default function LoginPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ workEmail: email, password }),
+        credentials: 'include',
       });
 
       const data = await response.json();
@@ -105,7 +106,7 @@ export default function LoginPage() {
       }
 
       // Save token to localStorage for authenticated requests
-      localStorage.setItem('token', data.token);
+      //localStorage.setItem('token', data.token);
 
       // Redirect to your main dashboard/home page
       router.push('/dashboard'); 
