@@ -8,8 +8,7 @@ import { LeavesModule } from './leaves/leaves.module';
 import { AuthModule } from './auth/auth.module';
 import { EmployeeProfile, EmployeeProfileSchema } from './employee-profile/Models/employee-profile.schema';
 import * as dotenv from 'dotenv';
-import * as path from 'path';
-dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
+dotenv.config();
 
 
 @Module({
@@ -29,4 +28,4 @@ dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}
