@@ -54,7 +54,6 @@ export default function LoginPage() {
     window.location.href = 'http://localhost:5000/api/auth/google';
   };
   
-
   return (
     <div className="login-page-wrapper">
       <div className="login-card">
