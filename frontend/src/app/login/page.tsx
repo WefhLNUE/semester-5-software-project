@@ -53,6 +53,7 @@ export default function LoginPage() {
     // Redirect user to the backend Google Auth route
     window.location.href = 'http://localhost:5000/api/auth/google';
   };
+  
 
   return (
     <div className="login-page-wrapper">
