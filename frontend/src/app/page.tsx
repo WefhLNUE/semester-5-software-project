@@ -78,6 +78,9 @@ export default function Home() {
               <Link href="/employee-profile" className="btn-primary">
                 Get started
               </Link>
+              <Link href="/performance" className="btn-primary" style={{ backgroundColor: "var(--performance)", border: "none" }}>
+                Performance Management
+              </Link>
               <Link href="/recruitment" className="btn-secondary">
                 Explore recruitment
               </Link>
@@ -148,6 +151,32 @@ export default function Home() {
                 Keep candidates organized, move faster, and maintain visibility across stages.
               </div>
             </div>
+
+            <div className="stat-card" style={{ background: "linear-gradient(135deg, var(--performance) 0%, #d97706 100%)" }}>
+              <div style={{ fontSize: "0.75rem", fontWeight: 600, opacity: 0.9 }}>Performance Management</div>
+              <div style={{ marginTop: "0.5rem", fontSize: "1.5rem", fontWeight: 600 }}>Fair evaluations</div>
+              <div style={{ marginTop: "0.5rem", fontSize: "0.875rem", opacity: 0.9 }}>
+                Structured appraisals, transparent reviews, and employee development tracking.
+              </div>
+              <Link 
+                href="/performance" 
+                style={{ 
+                  marginTop: "1rem", 
+                  display: "inline-block",
+                  padding: "0.5rem 1rem",
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                  color: "white",
+                  borderRadius: "0.5rem",
+                  textDecoration: "none",
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  transition: "background-color 0.2s",
+                }}
+                className="performance-link"
+              >
+                Go to Performance →
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -194,6 +223,15 @@ export default function Home() {
               Create openings, track candidates, and move efficiently.
             </div>
           </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <div style={{ color: "var(--performance)", fontSize: "0.875rem", fontWeight: 600 }}>
+              Performance Management
+            </div>
+            <div style={{ color: "var(--text-secondary)", fontSize: "0.875rem" }}>
+              Manage appraisals, evaluations, and employee performance reviews.
+            </div>
+          </div>
         </div>
       </section>
 
@@ -232,6 +270,9 @@ export default function Home() {
             </Link>
             <Link href="/employee-profile" style={{ color: "var(--text-link)" }}>
               Employee Profile
+            </Link>
+            <Link href="/performance" style={{ color: "var(--text-link)" }}>
+              Performance
             </Link>
             <Link href="/recruitment" style={{ color: "var(--text-link)" }}>
               Recruitment
