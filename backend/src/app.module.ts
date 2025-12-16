@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { RecruitmentModule } from './recruitment/recruitment.module';
 import { LeavesModule } from './leaves/leaves.module';
 import { AuthModule } from './auth/auth.module';
+import { PerformanceModule } from './performance/performance.module';
 import { EmployeeProfile, EmployeeProfileSchema } from './employee-profile/Models/employee-profile.schema';
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -24,6 +25,7 @@ dotenv.config();
     AuthModule,
     RecruitmentModule,
     LeavesModule,
+    PerformanceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
