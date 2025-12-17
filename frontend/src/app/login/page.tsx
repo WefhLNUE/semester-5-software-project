@@ -38,8 +38,8 @@ export default function LoginPage() {
       // Save token to localStorage for authenticated requests
       localStorage.setItem('token', data.token);
 
-      // Redirect to your main dashboard/home page
-      router.push('/dashboard'); 
+      // Redirect to leaves page after successful login
+      router.push('/leaves'); 
       
     } catch (err: any) {
       setError(err.message);
@@ -140,6 +140,6 @@ export default function LoginPage() {
       <footer className="copyright">
         © 2024 HR Management System. All rights reserved.
       </footer>
-    </div>
-  );
+    </div>
+  );
 }

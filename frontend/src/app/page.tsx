@@ -75,14 +75,17 @@ export default function Home() {
             </p>
 
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "0.75rem" }}>
-              <Link href="/employee-profile" className="btn-primary">
-                Get started
+              <Link href="/leaves" className="btn-primary">
+                Manage Leaves
+              </Link>
+              <Link href="/employee-profile" className="btn-secondary">
+                Employee Profiles
               </Link>
               <Link href="/performance" className="btn-primary" style={{ backgroundColor: "var(--performance)", border: "none" }}>
                 Performance Management
               </Link>
               <Link href="/recruitment" className="btn-secondary">
-                Explore recruitment
+                Recruitment
               </Link>
             </div>
 

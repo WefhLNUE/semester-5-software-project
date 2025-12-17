@@ -2,7 +2,9 @@
 /dist
 /node_modules
 /build
-
+playwright*
+test-results/*
+playwright/*
 # Logs
 logs
 *.log

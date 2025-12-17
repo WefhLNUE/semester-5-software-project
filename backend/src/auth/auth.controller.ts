@@ -3,6 +3,7 @@ import {
   Controller,
   Post,
   Res,
+  Req,
   Get,
   UseGuards,
   UnauthorizedException,
@@ -55,7 +56,7 @@ export class AuthController {
 
         res.cookie('accessToken', accessToken, {
             httpOnly: true,
-            sameSite: 'strict',
+            sameSite: 'lax',
             secure: false, // true in production (HTTPS)
             maxAge: 1000 * 60 * 60 * 24, // 1 day
         });
@@ -76,7 +77,7 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  me(@Res() res: Response, @Body() body) {
-    return res.send(res.req.user);
+  me(@Req() req: any) {
+    return req.user;
   }
 }

@@ -1,7 +1,11 @@
-import type { Metadata } from "next";
+'use client';
+
 import { Geist, Geist_Mono } from "next/font/google";
 import "../../main-theme.css";
 import MenuBar from "@/components/MenuBar";
+import { AuthProvider } from "./contexts/AuthContext";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,18 +17,33 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "HR System",
-  description: "Modern HR management system for teams: employees, recruitment, leaves, payroll and performance.",
-};
+// Metadata moved to head manually since layout is now 'use client'
+// export const metadata: Metadata = {
+//   title: "HR System",
+//   description: "Modern HR management system for teams: employees, recruitment, leaves, payroll and performance.",
+// };
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        staleTime: 5 * 60 * 1000, // 5 minutes
+        refetchOnWindowFocus: false,
+        retry: 1,
+      },
+    },
+  }));
+
   return (
     <html lang="en" style={{ height: "100%" }}>
+      <head>
+        <title>HR System</title>
+        <meta name="description" content="Modern HR management system for teams: employees, recruitment, leaves, payroll and performance." />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable}`}
         style={{
@@ -36,8 +55,12 @@ export default function RootLayout({
           color: "var(--text-primary)",
         }}
       >
-        <MenuBar />
-        <main>{children}</main>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <MenuBar />
+            <main>{children}</main>
+          </AuthProvider>
+        </QueryClientProvider>
       </body>
     </html>
   );

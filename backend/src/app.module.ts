@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { RecruitmentModule } from './recruitment/recruitment.module';
 import { LeavesModule } from './leaves/leaves.module';
+import { EntitlementModule } from './leaves/entitlement/entitlement.module';
 import { AuthModule } from './auth/auth.module';
 import { PerformanceModule } from './performance/performance.module';
 import { EmployeeProfile, EmployeeProfileSchema } from './employee-profile/Models/employee-profile.schema';
@@ -25,6 +26,7 @@ dotenv.config();
     AuthModule,
     RecruitmentModule,
     LeavesModule,
+    EntitlementModule,
     PerformanceModule,
   ],
   controllers: [AppController],
