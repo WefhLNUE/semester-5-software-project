@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
+import { Roles } from './decorator/roles.decorator';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { RegisterEmployeeDto } from '../employee-profile/dto/register-employee.dto';
@@ -74,6 +75,7 @@ export class AuthController {
   }
 
   @Get('me')
+  @Roles() // Allow any authenticated user
   @UseGuards(JwtAuthGuard)
   me(@Res() res: Response, @Body() body) {
     return res.send(res.req.user);
