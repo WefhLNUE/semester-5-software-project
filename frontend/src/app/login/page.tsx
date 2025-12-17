@@ -1,7 +1,7 @@
 'use client'; // Required for state and form handling
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import './login.css';
 
 type UserType = 'employee' | 'candidate';
@@ -13,6 +13,15 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get('returnUrl');
+
+  // Auto-select candidate if coming from careers page
+  useEffect(() => {
+    if (returnUrl?.includes('/recruitment/jobs/careers')) {
+      setUserType('candidate');
+    }
+  }, [returnUrl]);
 
   // Handle standard Email/Password Login
   const handleSubmit = async (e: React.FormEvent) => {
@@ -40,8 +49,8 @@ export default function LoginPage() {
       // Save token to localStorage for authenticated requests
       localStorage.setItem('token', data.token);
 
-      // Redirect to home page
-      router.push('/'); 
+      // Redirect to return URL or home page
+      router.push(returnUrl || '/'); 
       
     } catch (err: any) {
       setError(err.message);
