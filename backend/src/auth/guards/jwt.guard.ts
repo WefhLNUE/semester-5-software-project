@@ -1,10 +1,29 @@
 import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { Reflector } from '@nestjs/core';
+import { ROLES_KEY } from '../decorator/roles.decorator';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
+  constructor(private reflector: Reflector) {
+    super();
+  }
+
   canActivate(context: ExecutionContext) {
     console.log("🔥 JwtAuthGuard: canActivate CALLED");
+
+    // Check if @Roles decorator is present
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()]
+    );
+
+    // If no roles are required, this is a public endpoint - skip authentication
+    if (!requiredRoles) {
+      console.log("✅ JwtAuthGuard: No @Roles decorator → PUBLIC ENDPOINT, skipping auth");
+      return true;
+    }
+
     return super.canActivate(context);
   }
 
