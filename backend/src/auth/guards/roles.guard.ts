@@ -22,8 +22,15 @@ export class RolesGuard implements CanActivate {
     console.log("\n===== ROLE GUARD =====");
     console.log("Required roles:", requiredRoles);
 
-    if (!requiredRoles) {
-      console.log("No roles required → ALLOW");
+    // No @Roles decorator at all → public endpoint, allow
+    if (requiredRoles === undefined) {
+      console.log("No @Roles decorator → ALLOW");
+      return true;
+    }
+
+    // @Roles() with empty array → requires authentication but any role is allowed
+    if (requiredRoles.length === 0) {
+      console.log("Empty @Roles() → Any authenticated user allowed");
       return true;
     }
 

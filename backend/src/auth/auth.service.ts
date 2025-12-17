@@ -56,7 +56,7 @@ export class AuthService {
 
     // sign jwt
     const payload = {
-        sub: employee._id,
+        id: employee._id,
         workEmail: employee.workEmail,
         roles: roleDoc.roles,
         permissions: roleDoc.permissions,
@@ -76,7 +76,7 @@ export class AuthService {
     //LOGIN → returns JWT
     async login(user: AuthenticatedUser) {
         const payload = {
-            sub: user._id.toString(),
+            id: user._id.toString(),
             workEmail: user.workEmail || user.personalEmail,
             roles: user.systemRole?.roles ?? [],
             permissions: user.systemRole?.permissions ?? [],

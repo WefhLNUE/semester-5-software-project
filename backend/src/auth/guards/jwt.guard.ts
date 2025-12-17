@@ -18,12 +18,14 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       [context.getHandler(), context.getClass()]
     );
 
-    // If no roles are required, this is a public endpoint - skip authentication
-    if (!requiredRoles) {
+    // If @Roles decorator is not present at all (undefined), this is a public endpoint
+    // If @Roles() is present (even with empty array), authentication is required
+    if (requiredRoles === undefined) {
       console.log("✅ JwtAuthGuard: No @Roles decorator → PUBLIC ENDPOINT, skipping auth");
       return true;
     }
 
+    console.log("🔐 JwtAuthGuard: @Roles found, requiring authentication");
     return super.canActivate(context);
   }
 
