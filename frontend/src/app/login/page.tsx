@@ -4,9 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import './login.css';
 
+type UserType = 'employee' | 'candidate';
+
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [userType, setUserType] = useState<UserType>('employee');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -24,7 +27,7 @@ export default function LoginPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ workEmail: email, password }),
+        body: JSON.stringify({ workEmail: email, password, userType }),
         credentials: 'include',
       });
 
@@ -78,14 +81,54 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
+            <label>I am a</label>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+              <button
+                type="button"
+                onClick={() => setUserType('employee')}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  borderRadius: '8px',
+                  border: userType === 'employee' ? '2px solid #4f46e5' : '1px solid #d1d5db',
+                  backgroundColor: userType === 'employee' ? '#eef2ff' : '#fff',
+                  color: userType === 'employee' ? '#4f46e5' : '#374151',
+                  fontWeight: userType === 'employee' ? '600' : '400',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+              >
+                Employee
+              </button>
+              <button
+                type="button"
+                onClick={() => setUserType('candidate')}
+                style={{
+                  flex: 1,
+                  padding: '10px',
+                  borderRadius: '8px',
+                  border: userType === 'candidate' ? '2px solid #4f46e5' : '1px solid #d1d5db',
+                  backgroundColor: userType === 'candidate' ? '#eef2ff' : '#fff',
+                  color: userType === 'candidate' ? '#4f46e5' : '#374151',
+                  fontWeight: userType === 'candidate' ? '600' : '400',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                }}
+              >
+                Candidate
+              </button>
+            </div>
+          </div>
+
+          <div className="form-group">
             <label htmlFor="email">Email Address</label>
-            <input 
-              type="email" 
-              id="email" 
+            <input
+              type="email"
+              id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@company.com" 
-              required 
+              placeholder={userType === 'employee' ? 'you@company.com' : 'you@email.com'}
+              required
             />
           </div>
 

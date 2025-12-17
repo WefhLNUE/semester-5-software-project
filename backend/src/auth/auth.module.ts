@@ -18,6 +18,11 @@ import {
   EmployeeSystemRole,
   EmployeeSystemRoleSchema,
 } from '../employee-profile/Models/employee-system-role.schema';
+
+import {
+  Candidate,
+  CandidateSchema,
+} from '../employee-profile/Models/candidate.schema';
 import { RolesGuard } from './guards/roles.guard';
 
 @Module({
@@ -34,6 +39,7 @@ import { RolesGuard } from './guards/roles.guard';
     MongooseModule.forFeature([
       { name: EmployeeProfile.name, schema: EmployeeProfileSchema },
       { name: EmployeeSystemRole.name, schema: EmployeeSystemRoleSchema },
+      { name: Candidate.name, schema: CandidateSchema },
     ]),
 
     // Load JWT secret dynamically

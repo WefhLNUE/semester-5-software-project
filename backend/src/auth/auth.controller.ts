@@ -45,9 +45,10 @@ export class AuthController {
 
     @Post('login')
     async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
-        const user = await this.authService.validateEmployee(
+        const user = await this.authService.validateUser(
             dto.workEmail,
             dto.password,
+            dto.userType,
         );
         if (!user) throw new UnauthorizedException('Invalid credentials');
 
@@ -61,10 +62,8 @@ export class AuthController {
         });
 
         console.log("Generated token:", accessToken);
-        // const userId = user._id;
-        // const userRolesTable =  
 
-        return { message: 'Logged in successfully' };
+        return { message: 'Logged in successfully', userType: user.userType };
     }
 
 

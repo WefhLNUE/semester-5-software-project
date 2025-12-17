@@ -1,4 +1,9 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsString } from 'class-validator';
+
+export enum UserType {
+  EMPLOYEE = 'employee',
+  CANDIDATE = 'candidate',
+}
 
 export class LoginDto {
   @IsEmail()
@@ -6,4 +11,7 @@ export class LoginDto {
 
   @IsString()
   password: string;
+
+  @IsEnum(UserType)
+  userType: UserType;
 }
