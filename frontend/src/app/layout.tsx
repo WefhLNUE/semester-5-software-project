@@ -3,8 +3,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "../../main-theme.css";
 import MenuBar from "@/components/MenuBar";
-import { AuthProvider } from "./contexts/AuthContext";
-import { ToastProvider } from "./contexts/ToastContext";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState } from "react";
 
@@ -57,12 +55,8 @@ export default function RootLayout({
         }}
       >
         <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <ToastProvider>
-              <MenuBar />
-              <main>{children}</main>
-            </ToastProvider>
-          </AuthProvider>
+          <MenuBar />
+          <main>{children}</main>
         </QueryClientProvider>
       </body>
     </html>
