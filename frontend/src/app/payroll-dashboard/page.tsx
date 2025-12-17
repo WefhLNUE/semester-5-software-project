@@ -19,7 +19,7 @@ export default function PayrollDashboard() {
             description: "Initiate payroll runs, manage approvals, generate payslips, and finalize payments.",
             icon: <Play size={32} fill="currentColor" />,
             href: "/payroll-execution",
-            colorVar: "var(--primary-600)", // Consistent Theme
+            colorVar: "var(--primary-600)",
             bgVar: "var(--primary-100)",
             action: "Run Payroll"
         },
@@ -28,7 +28,7 @@ export default function PayrollDashboard() {
             description: "Monitor payment history, manage refunds, and view detailed analytical reports.",
             icon: <History size={32} />,
             href: "/payroll-tracking",
-            colorVar: "var(--primary-600)", // Consistent Theme
+            colorVar: "var(--primary-600)",
             bgVar: "var(--primary-100)",
             action: "Track Payments"
         }
