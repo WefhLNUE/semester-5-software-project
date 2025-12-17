@@ -37,8 +37,8 @@ export default function LoginPage() {
       // Save token to localStorage for authenticated requests
       localStorage.setItem('token', data.token);
 
-      // Redirect to your main dashboard/home page
-      router.push('/dashboard'); 
+      // Redirect to home page
+      router.push('/'); 
       
     } catch (err: any) {
       setError(err.message);
