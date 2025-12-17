@@ -39,7 +39,7 @@ const navItems: NavItem[] = [
   { label: "Performance", href: "/performance", moduleColorVar: "--performance", requiresAuth: true },
   { label: "Time", href: "/time-management", moduleColorVar: "--time-management", requiresAuth: true },
   { label: "Recruitment", href: "/recruitment", moduleColorVar: "--recruitment", requiresAuth: true },
-  { label: "Payroll", href: "/payroll-tracking", moduleColorVar: "--payroll", requiresAuth: true },
+  { label: "Payroll", href: "/payroll-dashboard", moduleColorVar: "--payroll", requiresAuth: true },
 ];
 
 function isActivePath(pathname: string, href: string) {

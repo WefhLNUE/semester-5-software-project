@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { Settings, Play, History, ChevronRight, LayoutDashboard, ShieldCheck } from "lucide-react";
 
-
 export default function PayrollDashboard() {
     const cards = [
         {
