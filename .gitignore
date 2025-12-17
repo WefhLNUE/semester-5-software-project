@@ -2,9 +2,7 @@
 /dist
 /node_modules
 /build
-playwright*
-test-results/*
-*playwright*/*
+
 # Logs
 logs
 *.log
@@ -55,3 +53,7 @@ lerna-debug.log*
 
 
 CLAUDE.md
+playwright*
+test-results/*
+*playwright*/*
+leave-tests.spec.ts
