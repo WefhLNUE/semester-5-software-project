@@ -13,6 +13,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { label: "Home", href: "/" },
+  { label: "Careers", href: "/recruitment/jobs/careers", moduleColorVar: "--recruitment", requiresAuth: false },
   {
     label: "Employee Profile",
     href: "/employee-profile",
