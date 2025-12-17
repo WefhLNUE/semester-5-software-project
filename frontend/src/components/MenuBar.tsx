@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { User } from "lucide-react";
+import { jwtDecode } from "jwt-decode";
 
 type NavItem = {
   label: string;
@@ -10,6 +12,13 @@ type NavItem = {
   moduleColorVar?: string;
   requiresAuth?: boolean;
 };
+
+interface UserPayload {
+  id: string;
+  workEmail?: string;
+  personalEmail?: string;
+  roles?: string[];
+}
 
 const navItems: NavItem[] = [
   { label: "Home", href: "/" },
@@ -42,19 +51,46 @@ export default function MenuBar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<{ id: string; role: string; name?: string } | null>(null);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
+    setUser(null);
     router.replace("/login");
   };
 
   useEffect(() => {
-    setIsAuthenticated(Boolean(localStorage.getItem("token")));
+    // Initial Check
+    const token = localStorage.getItem("token");
+    const hasToken = Boolean(token);
+    setIsAuthenticated(hasToken);
+
+    const loadUserFromToken = (token: string) => {
+      try {
+        const decoded = jwtDecode<UserPayload>(token);
+        const userRole = decoded.roles && decoded.roles.length > 0 ? decoded.roles[0] : 'EMPLOYEE';
+        setUser({
+          id: decoded.id,
+          role: userRole,
+          name: decoded.workEmail || decoded.personalEmail || "User"
+        });
+      } catch (error) {
+        console.error("Invalid token", error);
+        setUser(null);
+      }
+    };
+
+    if (token) {
+      loadUserFromToken(token);
+    }
 
     const onStorage = (e: StorageEvent) => {
       if (e.key === "token") {
-        setIsAuthenticated(Boolean(localStorage.getItem("token")));
+        const newToken = localStorage.getItem("token");
+        const tokenExists = Boolean(newToken);
+        setIsAuthenticated(tokenExists);
+        if (newToken) loadUserFromToken(newToken); else setUser(null);
       }
     };
 
@@ -147,22 +183,75 @@ export default function MenuBar() {
           )}
 
           {isAuthenticated && (
-            <button
-              type="button"
-              onClick={handleLogout}
-              style={{
-                border: "none",
-                cursor: "pointer",
-                borderRadius: "0.5rem",
-                padding: "0.5rem 0.9rem",
-                fontSize: "0.875rem",
-                fontWeight: 600,
-                backgroundColor: "transparent",
-                color: "var(--text-secondary)",
-              }}
-            >
-              Logout
-            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <button
+                type="button"
+                onClick={handleLogout}
+                style={{
+                  border: "none",
+                  cursor: "pointer",
+                  borderRadius: "0.5rem",
+                  padding: "0.5rem 0.9rem",
+                  fontSize: "0.875rem",
+                  fontWeight: 600,
+                  backgroundColor: "transparent",
+                  color: "var(--text-secondary)",
+                }}
+              >
+                Logout
+              </button>
+
+              {/* User Profile Badge */}
+              {user && (
+                <div
+                  className="animate-fade-in hover-lift"
+                  onClick={() => router.push("/employee-profile")}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.75rem",
+                    background: "white",
+                    padding: "0.5rem 0.75rem 0.5rem 0.5rem",
+                    borderRadius: "2rem",
+                    boxShadow: "var(--shadow-sm)",
+                    border: "1px solid var(--border-light)",
+                    cursor: "pointer",
+                    transition: "all 0.2s"
+                  }}
+                >
+                  {/* Generic Professional Icon */}
+                  <div style={{
+                    width: "36px",
+                    height: "36px",
+                    background: "var(--primary-100)",
+                    color: "var(--primary-600)",
+                    borderRadius: "50%",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05)"
+                  }}>
+                    <User size={20} strokeWidth={2.5} />
+                  </div>
+
+                  <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.2 }}>
+                    <span style={{ fontSize: "0.875rem", fontWeight: 700, color: "var(--text-primary)" }}>{user.name || "User"}</span>
+                    <span style={{
+                      fontSize: "0.65rem",
+                      color: "var(--primary-600)",
+                      textTransform: "uppercase",
+                      fontWeight: 700,
+                      letterSpacing: "0.05em",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.25rem"
+                    }}>
+                      {user.role}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </div>
       </nav>
