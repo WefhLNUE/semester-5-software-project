@@ -44,11 +44,20 @@ export class AuthController {
 
 
     @Post('login')
-    async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
+    async login(
+      @Body() dto: LoginDto,
+      @Res({ passthrough: true }) res: Response,
+    ) {
+        // Guard against missing / invalid body to avoid generic 500 errors
+        if (!dto) {
+          throw new UnauthorizedException('Missing login credentials');
+        }
+
         const user = await this.authService.validateEmployee(
-            dto.workEmail,
-            dto.password,
+          dto.workEmail,
+          dto.password,
         );
+        
         if (!user) throw new UnauthorizedException('Invalid credentials');
 
         const { accessToken } = await this.authService.login(user);
