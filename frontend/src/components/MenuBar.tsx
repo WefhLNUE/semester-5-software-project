@@ -61,41 +61,83 @@ export default function MenuBar() {
   };
 
   useEffect(() => {
-    // Initial Check
-    const token = localStorage.getItem("token");
-    const hasToken = Boolean(token);
-    setIsAuthenticated(hasToken);
-
-    const loadUserFromToken = (token: string) => {
-      try {
-        const decoded = jwtDecode<UserPayload>(token);
-        const userRole = decoded.roles && decoded.roles.length > 0 ? decoded.roles[0] : 'EMPLOYEE';
+    // 1. Optimistic UI Check
+    // Prevent UI flicker by assuming logged-in if any token marker persists.
+    const tokenMarker = localStorage.getItem("token");
+    if (tokenMarker) {
+      setIsAuthenticated(true);
+      if (!user) {
         setUser({
-          id: decoded.id,
-          role: userRole,
-          name: decoded.workEmail || decoded.personalEmail || "User"
+          id: "placeholder",
+          role: "EMPLOYEE",
+          name: "Loading..."
         });
-      } catch (error) {
-        console.error("Invalid token", error);
-        setUser(null);
       }
-    };
-
-    if (token) {
-      loadUserFromToken(token);
     }
 
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === "token") {
-        const newToken = localStorage.getItem("token");
-        const tokenExists = Boolean(newToken);
-        setIsAuthenticated(tokenExists);
-        if (newToken) loadUserFromToken(newToken); else setUser(null);
+    // 2. Fetch User Data (Source of Truth)
+    // Verify session with backend cookie and get actual user details.
+    const API_URL = "http://localhost:5000";
+
+    const fetchUser = async (retryCount = 0) => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        const res = await fetch(`${API_URL}/auth/me?t=${Date.now()}`, {
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          cache: 'no-store',
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const text = await res.text();
+          if (text && text.length > 0) {
+            try {
+              const userData = JSON.parse(text);
+              const roleSource = userData.roles || userData.systemRole?.roles || [];
+              const userRole = Array.isArray(roleSource) && roleSource.length > 0 ? roleSource[0] : 'EMPLOYEE';
+
+              setUser({
+                id: userData.id || userData._id || userData.sub,
+                role: userRole,
+                name: userData.name || userData.workEmail || userData.username || "User"
+              });
+              setIsAuthenticated(true);
+              return;
+            } catch (e) {
+              console.error("JSON Parse Error", e);
+            }
+          }
+        }
+
+        // Handle Explicit Logout
+        if (res.status === 401 || res.status === 403) {
+          console.warn("Session expired");
+          setIsAuthenticated(false);
+          setUser(null);
+          localStorage.removeItem("token");
+          return;
+        }
+
+        throw new Error(`Fetch failed: ${res.status}`);
+
+      } catch (error) {
+        // Retry logic for network resilience
+        if (retryCount < 3) {
+          setTimeout(() => fetchUser(retryCount + 1), 1000);
+        } else {
+          // Final Fallback: Ensure UI resolves
+          setUser((prev) => prev ? { ...prev, name: "Employee" } : { id: "fallback", role: "EMPLOYEE", name: "Employee" });
+        }
       }
     };
 
-    window.addEventListener("storage", onStorage);
-    return () => window.removeEventListener("storage", onStorage);
+    if (tokenMarker) {
+      fetchUser();
+    }
   }, [pathname]);
 
   const visibleNavItems = isAuthenticated ? navItems : navItems.filter((item) => !item.requiresAuth);
