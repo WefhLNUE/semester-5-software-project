@@ -8,6 +8,7 @@ import { LeavesModule } from './leaves/leaves.module';
 import { AuthModule } from './auth/auth.module';
 import { EmployeeProfile, EmployeeProfileSchema } from './employee-profile/Models/employee-profile.schema';
 import * as dotenv from 'dotenv';
+import { OrganizationStructureModule } from './organization-structure/organization-structure.module';
 dotenv.config();
 
 
@@ -24,6 +25,7 @@ dotenv.config();
     AuthModule,
     RecruitmentModule,
     LeavesModule,
+    OrganizationStructureModule,
   ],
   controllers: [AppController],
   providers: [AppService],
