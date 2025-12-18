@@ -6,10 +6,13 @@ import { AppService } from './app.service';
 import { RecruitmentModule } from './recruitment/recruitment.module';
 import { LeavesModule } from './leaves/leaves.module';
 import { AuthModule } from './auth/auth.module';
-import { EmployeeProfile, EmployeeProfileSchema } from './employee-profile/Models/employee-profile.schema';
+import {
+  EmployeeProfile,
+  EmployeeProfileSchema,
+} from './employee-profile/Models/employee-profile.schema';
+import { PayrollTrackingModule } from './payroll-tracking/payroll-tracking.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
-
 
 @Module({
   imports: [
@@ -24,6 +27,7 @@ dotenv.config();
     AuthModule,
     RecruitmentModule,
     LeavesModule,
+    PayrollTrackingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
