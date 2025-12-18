@@ -98,7 +98,7 @@ export default function MenuBar() {
             try {
               const userData = JSON.parse(text);
               const roleSource = userData.roles || userData.systemRole?.roles || [];
-              const userRole = Array.isArray(roleSource) && roleSource.length > 0 ? roleSource[0] : 'EMPLOYEE';
+              const userRole = Array.isArray(roleSource) && roleSource.length > 0 ? roleSource[0] : 'Candidate';
 
               setUser({
                 id: userData.id || userData._id || userData.sub,
