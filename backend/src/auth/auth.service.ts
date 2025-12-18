@@ -8,8 +8,10 @@ import { EmployeeProfile } from '../employee-profile/Models/employee-profile.sch
 import { EmployeeSystemRole } from '../employee-profile/Models/employee-system-role.schema';
 import { Candidate } from '../employee-profile/Models/candidate.schema';
 import { RegisterEmployeeDto } from '../employee-profile/dto/register-employee.dto';
+import { RegisterCandidateDto } from './dto/register-candidate.dto';
 import { EmployeeProfileService } from '../employee-profile/employee-profile.service';
 import { UserType } from './dto/login.dto';
+import { CandidateStatus } from '../employee-profile/enums/employee-profile.enums';
 
 type RoleDocument = HydratedDocument<EmployeeSystemRole>;
 
@@ -70,6 +72,33 @@ export class AuthService {
         user: employee,
     };
 }
+
+    async registerCandidate(dto: RegisterCandidateDto) {
+        const candidateNumber = `CAND-${Date.now()}`;
+
+        const candidate = await this.candidateModel.create({
+            ...dto,
+            candidateNumber,
+            applicationDate: new Date(),
+            status: CandidateStatus.APPLIED,
+        });
+
+        const payload = {
+            id: candidate._id.toString(),
+            workEmail: candidate.personalEmail,
+            roles: [],
+            permissions: [],
+            candidateNumber: candidate.candidateNumber,
+            userType: UserType.CANDIDATE,
+        };
+
+        const accessToken = this.jwtService.sign(payload);
+
+        return {
+            accessToken,
+            user: candidate,
+        };
+    }
 
 
 

@@ -13,6 +13,7 @@ import { Roles } from './decorator/roles.decorator';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { RegisterEmployeeDto } from '../employee-profile/dto/register-employee.dto';
+import { RegisterCandidateDto } from './dto/register-candidate.dto';
 
 
 
@@ -35,13 +36,20 @@ export class AuthController {
 
     return { message: 'Employee registered successfully', user: result.user };
   }
-  
 
-    // @Post()
-    // @Roles(SystemRole.HR_MANAGER)
-    // createEmployee(@Body() dto: RegisterEmployeeDto) {
-    //     return this.svc.createEmployee(dto);
-    // }
+    @Post('register/candidate')
+    async registerCandidate(@Body() dto: RegisterCandidateDto, @Res({ passthrough: true }) res: Response) {
+      const result = await this.authService.registerCandidate(dto);
+
+      res.cookie('accessToken', result.accessToken, {
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: false,
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+
+      return { message: 'Candidate registered successfully', token: result.accessToken, user: result.user };
+    }
 
 
     @Post('login')
@@ -64,7 +72,7 @@ export class AuthController {
 
         console.log("Generated token:", accessToken);
 
-        return { message: 'Logged in successfully', userType: user.userType };
+        return { message: 'Logged in successfully', token: accessToken, userType: user.userType };
     }
 
 
