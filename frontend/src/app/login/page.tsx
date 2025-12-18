@@ -31,7 +31,7 @@ export default function LoginPage() {
 
     try {
       // Replace URL with your actual backend endpoint
-      const response = await fetch('http://localhost:5000/auth/login', {
+      const response = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export default function LoginPage() {
   // Handle Google OAuth
   const handleGoogleLogin = () => {
     // Redirect user to the backend Google Auth route
-    window.location.href = 'http://localhost:5000/api/auth/google';
+    window.location.href = 'http://localhost:3000/api/auth/google';
   };
   
   return (
