@@ -81,6 +81,10 @@ export class AuthService {
             candidateNumber,
             applicationDate: new Date(),
             status: CandidateStatus.APPLIED,
+            // GDPR: Record consent date when candidate registers
+            gdprConsentDate: dto.gdprConsent ? new Date() : undefined,
+            // Set data retention expiry (default 2 years from registration per GDPR guidelines)
+            dataRetentionExpiryDate: dto.dataRetentionConsent ? new Date(Date.now() + 2 * 365 * 24 * 60 * 60 * 1000) : undefined,
         });
 
         const payload = {

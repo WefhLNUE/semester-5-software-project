@@ -5,6 +5,7 @@ import {
   MinLength,
   IsEnum,
   IsDateString,
+  IsBoolean,
 } from 'class-validator';
 import { Gender, MaritalStatus } from '../../employee-profile/enums/employee-profile.enums';
 
@@ -65,4 +66,9 @@ export class RegisterCandidateDto {
 
   @IsOptional()
   address?: AddressDto;
+
+  // GDPR Compliance Fields
+  @IsBoolean()
+  gdprConsent: boolean;
+
 }
