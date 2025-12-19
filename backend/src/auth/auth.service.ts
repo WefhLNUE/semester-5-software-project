@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, HydratedDocument } from 'mongoose';
@@ -11,7 +11,7 @@ import { RegisterEmployeeDto } from '../employee-profile/dto/register-employee.d
 import { RegisterCandidateDto } from './dto/register-candidate.dto';
 import { EmployeeProfileService } from '../employee-profile/employee-profile.service';
 import { UserType } from './dto/login.dto';
-import { CandidateStatus } from '../employee-profile/enums/employee-profile.enums';
+import { CandidateStatus, EmployeeStatus } from '../employee-profile/enums/employee-profile.enums';
 
 type RoleDocument = HydratedDocument<EmployeeSystemRole>;
 
@@ -155,6 +155,19 @@ export class AuthService {
             'workEmail',
         );
         if (!employee) return null;
+
+        // Check if employee status allows login
+        const inactiveStatuses = [
+            EmployeeStatus.TERMINATED,
+            EmployeeStatus.RETIRED,
+            EmployeeStatus.SUSPENDED,
+            EmployeeStatus.INACTIVE
+        ];
+        if (inactiveStatuses.includes(employee.status)) {
+            throw new UnauthorizedException(
+                `Access denied. Your account status is ${employee.status}. Please contact HR for assistance.`
+            );
+        }
 
         // Load roles
         const systemRole = await this.employeeRoleModel.findOne({
