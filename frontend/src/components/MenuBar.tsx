@@ -103,7 +103,7 @@ export default function MenuBar() {
 
     // 2. Fetch User Data (Source of Truth)
     // Verify session with backend cookie and get actual user details.
-    const API_URL = "http://localhost:5000";
+    const API_URL = "http://localhost:3000";
 
     const fetchUser = async (retryCount = 0) => {
       try {
