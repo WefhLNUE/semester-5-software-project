@@ -1,6 +1,6 @@
 'use client';
 
-import { showToast, ToastType } from './ToastContext';
+import { showToast, ToastType } from './toast';
 
 /**
  * Hook wrapper for toast functionality

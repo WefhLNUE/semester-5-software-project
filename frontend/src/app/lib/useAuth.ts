@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { User, checkAuth, hasRole as checkRole, hasPermission as checkPermission } from './AuthContext';
+import { User, checkAuth, hasRole as checkRole, hasPermission as checkPermission } from './auth';
 
 interface UseAuthReturn {
   user: User | null;
