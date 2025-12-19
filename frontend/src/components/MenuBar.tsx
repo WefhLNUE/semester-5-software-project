@@ -51,7 +51,7 @@ export default function MenuBar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<{ id: string; role: string; name?: string } | null>(null);
+  const [user, setUser] = useState<{ id: string; role: string; name?: string; profilePictureUrl?: string | null } | null>(null);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -100,10 +100,14 @@ export default function MenuBar() {
               const roleSource = userData.roles || userData.systemRole?.roles || [];
               const userRole = Array.isArray(roleSource) && roleSource.length > 0 ? roleSource[0] : 'Candidate';
 
+              console.log('[MenuBar] User data received:', userData);
+              console.log('[MenuBar] Profile picture URL:', userData.profilePictureUrl);
+
               setUser({
                 id: userData.id || userData._id || userData.sub,
                 role: userRole,
-                name: userData.name || userData.workEmail || userData.username || "User"
+                name: userData.name || userData.workEmail || userData.username || "User",
+                profilePictureUrl: userData.profilePictureUrl || null
               });
               setIsAuthenticated(true);
               return;
@@ -261,19 +265,37 @@ export default function MenuBar() {
                     transition: "all 0.2s"
                   }}
                 >
-                  {/* Generic Professional Icon */}
+                  {/* Profile Photo or Generic Icon */}
                   <div style={{
                     width: "36px",
                     height: "36px",
-                    background: "var(--primary-100)",
+                    background: user.profilePictureUrl ? "transparent" : "var(--primary-100)",
                     color: "var(--primary-600)",
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05)"
+                    boxShadow: "inset 0 0 0 1px rgba(0,0,0,0.05)",
+                    overflow: "hidden"
                   }}>
-                    <User size={20} strokeWidth={2.5} />
+                    {user.profilePictureUrl ? (
+                      <img
+                        src={user.profilePictureUrl}
+                        alt={user.name || "Profile"}
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover"
+                        }}
+                        onError={(e) => {
+                          // Fallback to icon if image fails to load
+                          e.currentTarget.style.display = 'none';
+                          e.currentTarget.parentElement!.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>';
+                        }}
+                      />
+                    ) : (
+                      <User size={20} strokeWidth={2.5} />
+                    )}
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", lineHeight: 1.2 }}>
