@@ -85,13 +85,8 @@ export default function RegisterPage() {
             country: country || undefined,
           } : undefined,
           resumeUrl: resumeUrl || undefined,
-          // Compliance consents
-          consents: {
-            gdprConsent,
-            talentPoolConsent,
-            dataProcessingConsent,
-            consentDate: new Date().toISOString(),
-          },
+          // GDPR Compliance
+          gdprConsent,
         }),
         credentials: 'include',
       });

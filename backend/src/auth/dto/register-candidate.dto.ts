@@ -67,8 +67,6 @@ export class RegisterCandidateDto {
   @IsOptional()
   address?: AddressDto;
 
-  // GDPR Compliance Fields
-  @IsBoolean()
-  gdprConsent: boolean;
+
 
 }
