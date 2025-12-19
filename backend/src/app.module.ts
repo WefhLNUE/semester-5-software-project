@@ -11,6 +11,7 @@ import { EmployeeProfile, EmployeeProfileSchema } from './employee-profile/Model
 import { PayrollExecutionModule } from './payroll-execution/payroll-execution.module';
 import { PayrollConfigurationModule } from './payroll-configuration/payroll-configuration.module';
 import { PayrollTrackingModule } from './payroll-tracking/payroll-tracking.module';
+import { PerformanceModule } from './performance/performance.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -32,6 +33,7 @@ dotenv.config();
     PayrollExecutionModule,
     PayrollConfigurationModule,
     PayrollTrackingModule,
+    PerformanceModule,
   ],
   controllers: [AppController],
   providers: [AppService],
