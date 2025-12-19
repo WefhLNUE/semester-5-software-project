@@ -30,7 +30,6 @@
     "@nestjs/platform-express": "^11.1.9",
     "@nestjs/schedule": "^6.0.1",
     "@types/mongoose": "^5.11.96",
-    "@types/nodemailer": "^7.0.4",
     "@types/pdfkit": "^0.17.4",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
