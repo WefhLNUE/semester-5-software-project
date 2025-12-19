@@ -20,8 +20,13 @@ export default function RegisterPage() {
   const [city, setCity] = useState('');
   const [streetAddress, setStreetAddress] = useState('');
   const [country, setCountry] = useState('');
+  const [resumeUrl, setResumeUrl] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  // Compliance consent states
+  const [gdprConsent, setGdprConsent] = useState(false);
+  const [talentPoolConsent, setTalentPoolConsent] = useState(false);
+  const [dataProcessingConsent, setDataProcessingConsent] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,6 +40,22 @@ export default function RegisterPage() {
 
     if (password.length < 6) {
       setError('Password must be at least 6 characters');
+      return;
+    }
+
+    // Validate compliance consents
+    if (!gdprConsent) {
+      setError('You must agree to GDPR and data protection terms to continue');
+      return;
+    }
+
+    if (!dataProcessingConsent) {
+      setError('You must consent to data processing for recruitment purposes');
+      return;
+    }
+
+    if (!talentPoolConsent) {
+      setError('You must authorize talent pool storage to continue');
       return;
     }
 
@@ -63,6 +84,14 @@ export default function RegisterPage() {
             streetAddress: streetAddress || undefined,
             country: country || undefined,
           } : undefined,
+          resumeUrl: resumeUrl || undefined,
+          // Compliance consents
+          consents: {
+            gdprConsent,
+            talentPoolConsent,
+            dataProcessingConsent,
+            consentDate: new Date().toISOString(),
+          },
         }),
         credentials: 'include',
       });
@@ -353,6 +382,32 @@ export default function RegisterPage() {
             />
           </div>
 
+          {/* Resume URL */}
+          <div className="form-group">
+            <label htmlFor="resumeUrl">Resume URL</label>
+            <input
+              type="url"
+              id="resumeUrl"
+              value={resumeUrl}
+              onChange={(e) => setResumeUrl(e.target.value)}
+              placeholder="https://drive.google.com/your-resume or LinkedIn profile"
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                border: '1px solid #d1d5db',
+                borderRadius: '8px',
+                fontSize: '15px',
+              }}
+            />
+            <p style={{
+              fontSize: '12px',
+              color: '#6b7280',
+              marginTop: '4px',
+            }}>
+              Link to your resume (Google Drive, Dropbox, LinkedIn, etc.)
+            </p>
+          </div>
+
           {/* Password Fields */}
           <div className="form-group">
             <label htmlFor="password">Password *</label>
@@ -376,6 +431,145 @@ export default function RegisterPage() {
               placeholder="Re-enter your password"
               required
             />
+          </div>
+
+          {/* GDPR and Compliance Consents Section */}
+          <div style={{
+            backgroundColor: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderRadius: '12px',
+            padding: '20px',
+            marginTop: '20px',
+            marginBottom: '20px',
+          }}>
+            <h3 style={{
+              fontSize: '16px',
+              fontWeight: '600',
+              color: '#1e293b',
+              marginBottom: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}>
+              <span style={{ fontSize: '20px' }}>🔒</span>
+              Data Protection & Compliance
+            </h3>
+
+            {/* GDPR Consent - Required */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '12px',
+              marginBottom: '16px',
+              padding: '12px',
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+            }}>
+              <input
+                type="checkbox"
+                id="gdprConsent"
+                checked={gdprConsent}
+                onChange={(e) => setGdprConsent(e.target.checked)}
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  marginTop: '2px',
+                  cursor: 'pointer',
+                  accentColor: '#4f46e5',
+                }}
+              />
+              <label htmlFor="gdprConsent" style={{
+                fontSize: '14px',
+                color: '#374151',
+                cursor: 'pointer',
+                lineHeight: '1.5',
+              }}>
+                <strong style={{ color: '#1e293b' }}>GDPR & Data Protection Consent *</strong>
+                <br />
+                I consent to the collection, processing, and storage of my personal data in accordance with GDPR and applicable labor laws. I understand my rights regarding data access, rectification, and deletion.
+              </label>
+            </div>
+
+            {/* Data Processing Consent - Required */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '12px',
+              marginBottom: '16px',
+              padding: '12px',
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+            }}>
+              <input
+                type="checkbox"
+                id="dataProcessingConsent"
+                checked={dataProcessingConsent}
+                onChange={(e) => setDataProcessingConsent(e.target.checked)}
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  marginTop: '2px',
+                  cursor: 'pointer',
+                  accentColor: '#4f46e5',
+                }}
+              />
+              <label htmlFor="dataProcessingConsent" style={{
+                fontSize: '14px',
+                color: '#374151',
+                cursor: 'pointer',
+                lineHeight: '1.5',
+              }}>
+                <strong style={{ color: '#1e293b' }}>Recruitment Data Processing *</strong>
+                <br />
+                I authorize the processing of my data for recruitment purposes, including sharing with hiring managers and relevant parties involved in the recruitment process. I consent to receiving offer-related communications and understand that my acceptance of any offer will trigger the onboarding process.
+              </label>
+            </div>
+
+            {/* Talent Pool Consent - Optional */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '12px',
+              padding: '12px',
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+            }}>
+              <input
+                type="checkbox"
+                id="talentPoolConsent"
+                checked={talentPoolConsent}
+                onChange={(e) => setTalentPoolConsent(e.target.checked)}
+                style={{
+                  width: '20px',
+                  height: '20px',
+                  marginTop: '2px',
+                  cursor: 'pointer',
+                  accentColor: '#4f46e5',
+                }}
+              />
+              <label htmlFor="talentPoolConsent" style={{
+                fontSize: '14px',
+                color: '#374151',
+                cursor: 'pointer',
+                lineHeight: '1.5',
+              }}>
+                <strong style={{ color: '#1e293b' }}>Talent Pool Authorization *</strong>
+                <br />
+                I authorize the storage of my profile in the company's talent pool for future job opportunities. My data will be retained for up to 24 months and I can withdraw this consent at any time.
+              </label>
+            </div>
+
+            <p style={{
+              fontSize: '12px',
+              color: '#64748b',
+              marginTop: '12px',
+              fontStyle: 'italic',
+            }}>
+              * Required fields. You can withdraw your consent at any time by contacting our data protection officer.
+            </p>
           </div>
 
           <button type="submit" className="signin-button" disabled={loading}>
