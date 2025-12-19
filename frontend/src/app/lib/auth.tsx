@@ -21,8 +21,11 @@ export async function checkAuth(): Promise<User | null> {
 
     if (response.ok) {
       const userData = await response.json();
+      console.log('[checkAuth] Raw user data from backend:', userData);
+      console.log('[checkAuth] Roles from backend:', userData.roles);
       return userData;
     }
+    console.log('[checkAuth] Auth failed with status:', response.status);
     return null;
   } catch (error) {
     console.error('Auth check failed:', error);
