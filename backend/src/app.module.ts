@@ -7,6 +7,7 @@ import { RecruitmentModule } from './recruitment/recruitment.module';
 import { LeavesModule } from './leaves/leaves.module';
 import { AuthModule } from './auth/auth.module';
 import { EmployeeProfile, EmployeeProfileSchema } from './employee-profile/Models/employee-profile.schema';
+import { PayrollExecutionModule } from './payroll-execution/payroll-execution.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -24,8 +25,9 @@ dotenv.config();
     AuthModule,
     RecruitmentModule,
     LeavesModule,
+    PayrollExecutionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
