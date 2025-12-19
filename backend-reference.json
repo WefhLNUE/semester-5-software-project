@@ -1,0 +1,393 @@
+{
+  "schemas": {
+    "LeaveRequest": {
+      "collection": "leaverequests",
+      "fields": {
+        "employeeId": { "type": "ObjectId", "ref": "EmployeeProfile", "required": true },
+        "leaveTypeId": { "type": "ObjectId", "ref": "LeaveType", "required": true },
+        "dates": { "type": "Object", "fields": { "from": "Date", "to": "Date" }, "required": true },
+        "durationDays": { "type": "Number", "required": true },
+        "justification": { "type": "String", "required": false },
+        "attachmentId": { "type": "ObjectId", "ref": "Document", "required": false },
+        "approvalFlow": { "type": "Array", "items": { "role": "String", "status": "String", "decidedBy": "ObjectId", "decidedAt": "Date" } },
+        "status": { "type": "String", "enum": "LeaveStatus", "default": "pending" },
+        "irregularPatternFlag": { "type": "Boolean", "default": false },
+        "createdAt": { "type": "Date", "auto": true },
+        "updatedAt": { "type": "Date", "auto": true }
+      }
+    },
+    "LeaveEntitlement": {
+      "collection": "leaveentitlements",
+      "fields": {
+        "employeeId": { "type": "ObjectId", "ref": "EmployeeProfile", "required": true },
+        "leaveTypeId": { "type": "ObjectId", "ref": "LeaveType", "required": true },
+        "yearlyEntitlement": { "type": "Number", "default": 0 },
+        "accruedActual": { "type": "Number", "default": 0 },
+        "accruedRounded": { "type": "Number", "default": 0 },
+        "carryForward": { "type": "Number", "default": 0 },
+        "taken": { "type": "Number", "default": 0 },
+        "pending": { "type": "Number", "default": 0 },
+        "remaining": { "type": "Number", "default": 0 },
+        "lastAccrualDate": { "type": "Date", "required": false },
+        "nextResetDate": { "type": "Date", "required": false },
+        "createdAt": { "type": "Date", "auto": true },
+        "updatedAt": { "type": "Date", "auto": true }
+      }
+    },
+    "LeaveType": {
+      "collection": "leavetypes",
+      "fields": {
+        "code": { "type": "String", "required": true, "unique": true },
+        "name": { "type": "String", "required": true },
+        "categoryId": { "type": "ObjectId", "ref": "LeaveCategory", "required": true },
+        "description": { "type": "String", "required": false },
+        "paid": { "type": "Boolean", "default": true },
+        "deductible": { "type": "Boolean", "default": true },
+        "requiresAttachment": { "type": "Boolean", "default": false },
+        "attachmentType": { "type": "String", "enum": "AttachmentType", "required": false },
+        "minTenureMonths": { "type": "Number", "required": false },
+        "maxDurationDays": { "type": "Number", "required": false },
+        "createdAt": { "type": "Date", "auto": true },
+        "updatedAt": { "type": "Date", "auto": true }
+      }
+    },
+    "LeavePolicy": {
+      "collection": "leavepolicies",
+      "fields": {
+        "leaveTypeId": { "type": "ObjectId", "ref": "LeaveType", "required": true },
+        "accrualMethod": { "type": "String", "enum": "AccrualMethod", "default": "monthly" },
+        "monthlyRate": { "type": "Number", "default": 0 },
+        "yearlyRate": { "type": "Number", "default": 0 },
+        "carryForwardAllowed": { "type": "Boolean", "default": false },
+        "maxCarryForward": { "type": "Number", "default": 0 },
+        "expiryAfterMonths": { "type": "Number", "required": false },
+        "roundingRule": { "type": "String", "enum": "RoundingRule", "default": "none" },
+        "minNoticeDays": { "type": "Number", "default": 0 },
+        "maxConsecutiveDays": { "type": "Number", "required": false },
+        "eligibility": { "type": "Object", "fields": { "minTenureMonths": "Number", "positionsAllowed": "Array<String>", "contractTypesAllowed": "Array<String>" } },
+        "createdAt": { "type": "Date", "auto": true },
+        "updatedAt": { "type": "Date", "auto": true }
+      }
+    },
+    "EmployeeProfile": {
+      "collection": "employee_profiles",
+      "fields": {
+        "employeeNumber": { "type": "String", "required": true, "unique": true },
+        "dateOfHire": { "type": "Date", "required": true },
+        "workEmail": { "type": "String", "required": false },
+        "biography": { "type": "String", "required": false },
+        "contractStartDate": { "type": "Date", "required": false },
+        "contractEndDate": { "type": "Date", "required": false },
+        "bankName": { "type": "String", "required": false },
+        "bankAccountNumber": { "type": "String", "required": false },
+        "contractType": { "type": "String", "enum": "ContractType", "required": false },
+        "workType": { "type": "String", "enum": "WorkType", "required": false },
+        "status": { "type": "String", "enum": "EmployeeStatus", "required": true, "default": "ACTIVE" },
+        "statusEffectiveFrom": { "type": "Date", "default": "now" },
+        "primaryPositionId": { "type": "ObjectId", "ref": "Position", "required": false },
+        "primaryDepartmentId": { "type": "ObjectId", "ref": "Department", "required": false },
+        "supervisorPositionId": { "type": "ObjectId", "ref": "Position", "required": false },
+        "payGradeId": { "type": "ObjectId", "ref": "PayGrade", "required": false },
+        "createdAt": { "type": "Date", "auto": true },
+        "updatedAt": { "type": "Date", "auto": true }
+      }
+    }
+  },
+  "enums": {
+    "LeaveStatus": {
+      "PENDING": "pending",
+      "APPROVED": "approved",
+      "REJECTED": "rejected",
+      "CANCELLED": "cancelled"
+    },
+    "AccrualMethod": {
+      "MONTHLY": "monthly",
+      "YEARLY": "yearly",
+      "PER_TERM": "per-term"
+    },
+    "AttachmentType": {
+      "MEDICAL": "medical",
+      "DOCUMENT": "document",
+      "OTHER": "other"
+    },
+    "AdjustmentType": {
+      "ADD": "add",
+      "DEDUCT": "deduct",
+      "ENCASHMENT": "encashment"
+    },
+    "RoundingRule": {
+      "NONE": "none",
+      "ROUND": "round",
+      "ROUND_UP": "round_up",
+      "ROUND_DOWN": "round_down"
+    },
+    "SystemRole": {
+      "DEPARTMENT_EMPLOYEE": "Department Employee",
+      "HR_EMPLOYEE": "HR Employee",
+      "DEPARTMENT_HEAD": "Department Head",
+      "HR_MANAGER": "HR Manager",
+      "HR_ADMIN": "HR Admin",
+      "SYSTEM_ADMIN": "System Admin"
+    }
+  },
+  "apis": {
+    "POST /leaves/requests": {
+      "description": "Submit new leave request",
+      "auth": true,
+      "roles": ["DEPARTMENT_EMPLOYEE", "HR_EMPLOYEE", "DEPARTMENT_HEAD", "HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "body": {
+        "employeeId": "string (MongoDB ObjectId)",
+        "leaveTypeId": "string (MongoDB ObjectId)",
+        "fromDate": "string (ISO date)",
+        "toDate": "string (ISO date)",
+        "durationDays": "number (min 0.5)",
+        "justification": "string (optional)",
+        "attachmentId": "string (MongoDB ObjectId, optional)",
+        "isPostLeave": "boolean (optional)"
+      },
+      "returns": "LeaveRequest"
+    },
+    "GET /leaves/requests/me": {
+      "description": "Get current employee's leave requests",
+      "auth": true,
+      "roles": ["DEPARTMENT_EMPLOYEE", "HR_EMPLOYEE", "DEPARTMENT_HEAD", "HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "returns": "LeaveRequest[]"
+    },
+    "GET /leaves/requests/team": {
+      "description": "Get team leave requests (manager view)",
+      "auth": true,
+      "roles": ["DEPARTMENT_HEAD", "HR_MANAGER"],
+      "returns": "LeaveRequest[]"
+    },
+    "GET /leaves/requests": {
+      "description": "Get all leave requests (HR view)",
+      "auth": true,
+      "roles": ["HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "returns": "LeaveRequest[]"
+    },
+    "GET /leaves/requests/check-overlap": {
+      "description": "Check for overlapping leave requests",
+      "auth": true,
+      "roles": ["DEPARTMENT_EMPLOYEE", "HR_EMPLOYEE", "DEPARTMENT_HEAD", "HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "query": {
+        "from": "string (ISO date)",
+        "to": "string (ISO date)",
+        "excludeId": "string (optional)"
+      },
+      "returns": "{ hasOverlap: boolean, overlappingRequests: LeaveRequest[] }"
+    },
+    "DELETE /leaves/requests/:id/cancel": {
+      "description": "Cancel pending or approved leave request",
+      "auth": true,
+      "roles": ["DEPARTMENT_EMPLOYEE", "HR_EMPLOYEE", "DEPARTMENT_HEAD", "HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "params": { "id": "string (MongoDB ObjectId)" },
+      "returns": "LeaveRequest"
+    },
+    "POST /leaves/requests/:id/manager-approve": {
+      "description": "Manager approves leave request",
+      "auth": true,
+      "roles": ["DEPARTMENT_HEAD", "HR_MANAGER"],
+      "params": { "id": "string (MongoDB ObjectId)" },
+      "body": {
+        "comments": "string (optional)"
+      },
+      "returns": "LeaveRequest"
+    },
+    "POST /leaves/requests/:id/manager-reject": {
+      "description": "Manager rejects leave request",
+      "auth": true,
+      "roles": ["DEPARTMENT_HEAD", "HR_MANAGER"],
+      "params": { "id": "string (MongoDB ObjectId)" },
+      "body": {
+        "reason": "string"
+      },
+      "returns": "LeaveRequest"
+    },
+    "POST /leaves/requests/:id/hr-finalize": {
+      "description": "HR finalizes approved leave request",
+      "auth": true,
+      "roles": ["HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "params": { "id": "string (MongoDB ObjectId)" },
+      "body": {
+        "paidDays": "number",
+        "unpaidDays": "number",
+        "comments": "string (optional)"
+      },
+      "returns": "LeaveRequest"
+    },
+    "POST /leaves/requests/:id/hr-override": {
+      "description": "HR overrides manager decision",
+      "auth": true,
+      "roles": ["HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "params": { "id": "string (MongoDB ObjectId)" },
+      "body": {
+        "comments": "string",
+        "overrideReason": "string"
+      },
+      "returns": "LeaveRequest"
+    },
+    "POST /leaves/requests/bulk-process": {
+      "description": "Bulk approve or reject multiple requests",
+      "auth": true,
+      "roles": ["DEPARTMENT_HEAD", "HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "body": {
+        "requestIds": "string[] (MongoDB ObjectIds)",
+        "action": "string ('approve' | 'reject')"
+      },
+      "returns": "{ processed: number, results: LeaveRequest[] }"
+    },
+    "GET /leaves/tracking/me/balances": {
+      "description": "Get current employee's leave balances",
+      "auth": true,
+      "roles": ["DEPARTMENT_EMPLOYEE", "HR_EMPLOYEE", "DEPARTMENT_HEAD", "HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "query": {
+        "leaveTypeId": "string (optional)"
+      },
+      "returns": "Array<{ entitlement: LeaveEntitlement, leaveType: LeaveType, totalEntitlement: number, used: number, available: number, carriedOver: number }>"
+    },
+    "GET /leaves/tracking/me/history": {
+      "description": "Get current employee's leave history",
+      "auth": true,
+      "roles": ["DEPARTMENT_EMPLOYEE", "HR_EMPLOYEE", "DEPARTMENT_HEAD", "HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "query": {
+        "startDate": "string (ISO date, optional)",
+        "endDate": "string (ISO date, optional)",
+        "status": "string (optional)",
+        "leaveTypeId": "string (optional)"
+      },
+      "returns": "LeaveRequest[]"
+    },
+    "GET /leaves/tracking/team/balances": {
+      "description": "Get team leave balances (manager view)",
+      "auth": true,
+      "roles": ["DEPARTMENT_HEAD", "HR_MANAGER"],
+      "returns": "Array<{ employee: EmployeeProfile, balances: LeaveEntitlement[] }>"
+    },
+    "GET /leaves/tracking/team/history": {
+      "description": "Get team leave history (manager view)",
+      "auth": true,
+      "roles": ["DEPARTMENT_HEAD", "HR_MANAGER"],
+      "query": {
+        "startDate": "string (ISO date, optional)",
+        "endDate": "string (ISO date, optional)",
+        "status": "string (optional)"
+      },
+      "returns": "LeaveRequest[]"
+    },
+    "POST /leaves/tracking/flag-irregular": {
+      "description": "Flag irregular leave pattern",
+      "auth": true,
+      "roles": ["HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "body": {
+        "requestId": "string (MongoDB ObjectId)"
+      },
+      "returns": "LeaveRequest"
+    },
+    "POST /leaves/tracking/run-accrual": {
+      "description": "Manually trigger accrual job",
+      "auth": true,
+      "roles": ["HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "returns": "{ processed: number, updated: number }"
+    },
+    "POST /leaves/tracking/run-carry-forward": {
+      "description": "Manually trigger carry-forward job",
+      "auth": true,
+      "roles": ["HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "returns": "{ processed: number, updated: number }"
+    },
+    "POST /leaves/entitlements/assign": {
+      "description": "Assign personalized entitlement to employee",
+      "auth": true,
+      "roles": ["HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "body": {
+        "employeeId": "string (MongoDB ObjectId)",
+        "leaveTypeId": "string (MongoDB ObjectId)",
+        "personalizedEntitlement": "number (optional)",
+        "totalEntitlement": "number (optional)",
+        "year": "number (optional)",
+        "carriedOver": "number (optional)"
+      },
+      "returns": "LeaveEntitlement"
+    },
+    "POST /leaves/entitlements/bulk-assign": {
+      "description": "Bulk assign entitlements to multiple employees",
+      "auth": true,
+      "roles": ["HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "body": {
+        "assignments": "PersonalizedEntitlementDto[]"
+      },
+      "returns": "{ success: boolean, count: number, results: LeaveEntitlement[] }"
+    },
+    "POST /leaves/entitlements/manual-adjustment": {
+      "description": "Manual balance adjustment with audit trail",
+      "auth": true,
+      "roles": ["HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "body": {
+        "employeeId": "string (MongoDB ObjectId)",
+        "leaveTypeId": "string (MongoDB ObjectId)",
+        "amount": "number",
+        "adjustmentType": "string ('add' | 'deduct' | 'encashment')",
+        "reason": "string",
+        "hrUserId": "string (MongoDB ObjectId)"
+      },
+      "returns": "LeaveEntitlement"
+    },
+    "POST /leaves/entitlements": {
+      "description": "Create base entitlement",
+      "auth": true,
+      "roles": ["HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "body": {
+        "employeeId": "string (MongoDB ObjectId)",
+        "leaveTypeId": "string (MongoDB ObjectId)",
+        "yearlyEntitlement": "number"
+      },
+      "returns": "LeaveEntitlement"
+    },
+    "PATCH /leaves/entitlements/:id": {
+      "description": "Update entitlement numbers",
+      "auth": true,
+      "roles": ["HR_MANAGER", "HR_ADMIN", "SYSTEM_ADMIN"],
+      "params": { "id": "string (MongoDB ObjectId)" },
+      "body": {
+        "yearlyEntitlement": "number (optional)",
+        "carryForward": "number (optional)",
+        "taken": "number (optional)",
+        "remaining": "number (optional)"
+      },
+      "returns": "LeaveEntitlement"
+    }
+  },
+  "relationships": {
+    "LeaveRequest": [
+      "employeeId -> EmployeeProfile",
+      "leaveTypeId -> LeaveType",
+      "attachmentId -> Document",
+      "approvalFlow.decidedBy -> EmployeeProfile"
+    ],
+    "LeaveEntitlement": [
+      "employeeId -> EmployeeProfile",
+      "leaveTypeId -> LeaveType"
+    ],
+    "LeaveType": [
+      "categoryId -> LeaveCategory"
+    ],
+    "LeavePolicy": [
+      "leaveTypeId -> LeaveType"
+    ],
+    "EmployeeProfile": [
+      "primaryPositionId -> Position",
+      "primaryDepartmentId -> Department",
+      "supervisorPositionId -> Position",
+      "payGradeId -> PayGrade"
+    ]
+  },
+  "notes": {
+    "authentication": "All endpoints require JWT authentication. User ID is extracted from req.user.id or req.user._id",
+    "fieldMapping": "Frontend uses totalEntitlement/used/available, Backend uses yearlyEntitlement/taken/remaining. Mapping happens in tracking service.",
+    "dates": "All dates should be sent as ISO 8601 strings. Backend converts to Date objects.",
+    "objectIds": "All IDs are MongoDB ObjectIds. Frontend should send as strings.",
+    "leaveBalanceResponse": "GET /leaves/tracking/me/balances returns mapped fields: totalEntitlement (from yearlyEntitlement), used (from taken), available (from remaining), carriedOver (from carryForward)",
+    "roles": "SystemRole enum values are used for @Roles decorator. Multiple roles can access the same endpoint.",
+    "errorHandling": "Backend returns standard error responses with status codes and error messages in response.data.message"
+  }
+}

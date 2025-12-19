@@ -1,0 +1,625 @@
+{
+  "types": {
+    "LeaveRequest": {
+      "description": "Leave request with approval workflow",
+      "fields": {
+        "_id": "string (ObjectId)",
+        "employeeId": "string (ObjectId)",
+        "leaveTypeId": "string (ObjectId)",
+        "leaveType": "LeaveType (optional, populated)",
+        "dates": "{ from: string (ISO date), to: string (ISO date) }",
+        "durationDays": "number",
+        "justification": "string (optional)",
+        "attachmentId": "string (optional, ObjectId)",
+        "attachment": "Attachment (optional, populated)",
+        "approvalFlow": "ApprovalFlowStep[]",
+        "status": "LeaveStatus",
+        "irregularPatternFlag": "boolean",
+        "finalizationDetails": "FinalizationDetails (optional)",
+        "createdAt": "string (ISO date)",
+        "updatedAt": "string (ISO date)"
+      }
+    },
+    "LeaveEntitlement": {
+      "description": "Employee leave balance for specific leave type",
+      "fields": {
+        "_id": "string (ObjectId)",
+        "employeeId": "string (ObjectId)",
+        "leaveTypeId": "string (ObjectId)",
+        "leaveType": "LeaveType (optional, populated)",
+        "year": "number",
+        "totalEntitlement": "number",
+        "used": "number",
+        "pending": "number",
+        "available": "number",
+        "carriedOver": "number",
+        "carriedExpiry": "string (optional, ISO date)",
+        "lastAccrualDate": "string (optional, ISO date)",
+        "createdAt": "string (optional, ISO date)",
+        "updatedAt": "string (optional, ISO date)"
+      },
+      "notes": "Backend uses yearlyEntitlement/taken/remaining but API response is mapped to totalEntitlement/used/available"
+    },
+    "LeaveType": {
+      "description": "Leave type configuration",
+      "fields": {
+        "_id": "string (ObjectId)",
+        "code": "string",
+        "name": "string",
+        "categoryId": "string (ObjectId)",
+        "category": "{ _id: string, name: string, description?: string } (optional, populated)",
+        "description": "string (optional)",
+        "paid": "boolean",
+        "deductible": "boolean",
+        "requiresAttachment": "boolean",
+        "attachmentType": "AttachmentType (optional)",
+        "minTenureMonths": "number (optional)",
+        "maxDurationDays": "number (optional)",
+        "createdAt": "string (optional, ISO date)",
+        "updatedAt": "string (optional, ISO date)"
+      }
+    },
+    "LeavePolicy": {
+      "description": "Leave policy with accrual rules",
+      "fields": {
+        "_id": "string (ObjectId)",
+        "leaveTypeId": "string (ObjectId)",
+        "leaveType": "LeaveType (optional, populated)",
+        "accrualMethod": "AccrualMethod",
+        "monthlyRate": "number",
+        "yearlyRate": "number",
+        "carryForwardAllowed": "boolean",
+        "maxCarryForward": "number",
+        "expiryAfterMonths": "number (optional)",
+        "roundingRule": "RoundingRule",
+        "minNoticeDays": "number",
+        "maxConsecutiveDays": "number (optional)",
+        "eligibility": "object",
+        "createdAt": "string (optional, ISO date)",
+        "updatedAt": "string (optional, ISO date)"
+      }
+    }
+  },
+  "enums": {
+    "LeaveStatus": {
+      "PENDING": "pending",
+      "APPROVED": "approved",
+      "REJECTED": "rejected",
+      "CANCELLED": "cancelled",
+      "RETURNED": "returned",
+      "FINALIZED": "finalized"
+    },
+    "AttachmentType": {
+      "MEDICAL": "medical",
+      "DOCUMENT": "document",
+      "OTHER": "other"
+    },
+    "AdjustmentType": {
+      "ADD": "add",
+      "DEDUCT": "deduct",
+      "ENCASHMENT": "encashment"
+    },
+    "RoundingRule": {
+      "NONE": "none",
+      "ROUND": "round",
+      "ROUND_UP": "round_up",
+      "ROUND_DOWN": "round_down"
+    },
+    "AccrualMethod": {
+      "MONTHLY": "monthly",
+      "YEARLY": "yearly",
+      "PER_TERM": "per-term"
+    },
+    "ApprovalRole": {
+      "MANAGER": "manager",
+      "HR": "hr"
+    },
+    "ApprovalStatus": {
+      "PENDING": "pending",
+      "APPROVED": "approved",
+      "REJECTED": "rejected"
+    }
+  },
+  "hooks": {
+    "queries": {
+      "useMyBalances": {
+        "description": "Fetch current employee's leave balances",
+        "file": "hooks/queries/useMyBalances.ts",
+        "params": {
+          "query": "{ year?: number, leaveTypeId?: string }"
+        },
+        "returns": {
+          "balances": "Array<{ entitlement: LeaveEntitlement, leaveType: LeaveType, totalEntitlement: number, used: number, available: number, carriedOver: number }>",
+          "isLoading": "boolean",
+          "isError": "boolean",
+          "error": "Error | null",
+          "refetch": "() => Promise<void>"
+        },
+        "queryKey": "['leaves', 'my-balances', query]"
+      },
+      "useMyRequests": {
+        "description": "Fetch current employee's leave requests",
+        "file": "hooks/queries/useMyRequests.ts",
+        "returns": {
+          "requests": "LeaveRequest[]",
+          "isLoading": "boolean",
+          "isError": "boolean",
+          "error": "Error | null",
+          "refetch": "() => Promise<void>"
+        },
+        "queryKey": "['leaves', 'my-requests']"
+      },
+      "useMyHistory": {
+        "description": "Fetch current employee's leave history with filters",
+        "file": "hooks/queries/useMyHistory.ts",
+        "params": {
+          "filters": "{ startDate?: string, endDate?: string, status?: string, leaveTypeId?: string }"
+        },
+        "returns": {
+          "history": "LeaveRequest[]",
+          "isLoading": "boolean",
+          "isError": "boolean",
+          "error": "Error | null",
+          "refetch": "() => Promise<void>"
+        },
+        "queryKey": "['leaves', 'my-history', filters]"
+      },
+      "useAllRequests": {
+        "description": "Fetch all leave requests (HR admin view)",
+        "file": "hooks/queries/useAllRequests.ts",
+        "returns": {
+          "requests": "LeaveRequest[]",
+          "isLoading": "boolean",
+          "isError": "boolean",
+          "error": "Error | null",
+          "refetch": "() => Promise<void>"
+        },
+        "queryKey": "['leaves', 'all-requests']"
+      },
+      "useTeamRequests": {
+        "description": "Fetch team leave requests (manager view)",
+        "file": "hooks/queries/useTeamRequests.ts",
+        "returns": {
+          "requests": "LeaveRequest[]",
+          "isLoading": "boolean",
+          "isError": "boolean",
+          "error": "Error | null",
+          "refetch": "() => Promise<void>"
+        },
+        "queryKey": "['leaves', 'team-requests']"
+      },
+      "useLeaveTypes": {
+        "description": "Fetch all leave types",
+        "file": "hooks/queries/useLeaveTypes.ts",
+        "returns": {
+          "leaveTypes": "LeaveType[]",
+          "isLoading": "boolean",
+          "isError": "boolean",
+          "error": "Error | null",
+          "refetch": "() => Promise<void>"
+        },
+        "queryKey": "['leaves', 'types']"
+      },
+      "usePolicies": {
+        "description": "Fetch all leave policies",
+        "file": "hooks/queries/usePolicies.ts",
+        "returns": {
+          "policies": "LeavePolicy[]",
+          "isLoading": "boolean",
+          "isError": "boolean",
+          "error": "Error | null",
+          "refetch": "() => Promise<void>"
+        },
+        "queryKey": "['leaves', 'policies']"
+      }
+    },
+    "mutations": {
+      "useCreateRequest": {
+        "description": "Submit new leave request",
+        "file": "hooks/mutations/useSubmitLeaveRequest.ts",
+        "params": {
+          "input": "{ leaveTypeId: string, dates: { from: string, to: string }, justification?: string, attachmentId?: string }"
+        },
+        "returns": "LeaveRequest",
+        "invalidates": ["['leaves', 'my-requests']", "['leaves', 'my-history']", "['leaves', 'my-balances']", "['leaves', 'all-requests']", "['leaves', 'team-requests']"]
+      },
+      "useCancelLeaveRequest": {
+        "description": "Cancel pending or approved leave request",
+        "file": "hooks/mutations/useCancelLeaveRequest.ts",
+        "params": {
+          "requestId": "string"
+        },
+        "returns": "LeaveRequest",
+        "invalidates": ["['leaves', 'my-requests']", "['leaves', 'my-history']", "['leaves', 'my-balances']", "['leaves', 'all-requests']", "['leaves', 'team-requests']"]
+      },
+      "useManagerApprove": {
+        "description": "Manager approves leave request",
+        "file": "hooks/mutations/useManagerApprove.ts",
+        "params": {
+          "id": "string",
+          "input": "{ comments?: string }"
+        },
+        "returns": "LeaveRequest",
+        "invalidates": ["['leaves', 'team-requests']", "['leaves', 'all-requests']"]
+      },
+      "useManagerReject": {
+        "description": "Manager rejects leave request",
+        "file": "hooks/mutations/useManagerReject.ts",
+        "params": {
+          "id": "string",
+          "input": "{ reason: string, comments?: string }"
+        },
+        "returns": "LeaveRequest",
+        "invalidates": ["['leaves', 'team-requests']", "['leaves', 'all-requests']"]
+      },
+      "useHrFinalize": {
+        "description": "HR finalizes approved leave request",
+        "file": "hooks/mutations/useHrFinalize.ts",
+        "params": {
+          "id": "string",
+          "input": "{ paidDays: number, unpaidDays: number, comments?: string }"
+        },
+        "returns": "LeaveRequest",
+        "invalidates": ["['leaves', 'all-requests']"]
+      },
+      "useHrOverride": {
+        "description": "HR overrides manager decision",
+        "file": "hooks/mutations/useHrOverride.ts",
+        "params": {
+          "id": "string",
+          "input": "{ overrideReason: string, comments?: string }"
+        },
+        "returns": "LeaveRequest",
+        "invalidates": ["['leaves', 'all-requests']"]
+      },
+      "useFlagIrregular": {
+        "description": "Flag leave request as irregular pattern",
+        "file": "hooks/mutations/useFlagIrregular.ts",
+        "params": {
+          "requestId": "string"
+        },
+        "returns": "LeaveRequest",
+        "invalidates": ["['leaves', 'all-requests']"]
+      },
+      "useAssignEntitlement": {
+        "description": "Assign personalized entitlement to employee",
+        "file": "hooks/mutations/useAssignEntitlement.ts",
+        "params": {
+          "input": "{ employeeId: string, leaveTypeId: string, totalEntitlement?: number, year?: number, carriedOver?: number }"
+        },
+        "returns": "LeaveEntitlement",
+        "invalidates": ["['leaves', 'entitlements']", "['leaves', 'my-balances']"]
+      }
+    },
+    "utility": {
+      "useWorkingDays": {
+        "description": "Calculate working days between dates",
+        "file": "hooks/useWorkingDays.ts",
+        "params": {
+          "from": "Date",
+          "to": "Date"
+        },
+        "returns": "number"
+      },
+      "useOverlapCheck": {
+        "description": "Check for overlapping leave requests",
+        "file": "hooks/useOverlapCheck.ts",
+        "params": {
+          "from": "string",
+          "to": "string",
+          "excludeId": "string (optional)"
+        },
+        "returns": {
+          "hasOverlap": "boolean",
+          "overlappingRequests": "LeaveRequest[]",
+          "isChecking": "boolean"
+        }
+      },
+      "useBlockedPeriodCheck": {
+        "description": "Check if dates fall in blocked period",
+        "file": "hooks/useBlockedPeriodCheck.ts",
+        "params": {
+          "from": "string",
+          "to": "string"
+        },
+        "returns": {
+          "isBlocked": "boolean",
+          "blockedPeriods": "BlockedPeriod[]",
+          "isChecking": "boolean"
+        }
+      }
+    }
+  },
+  "components": {
+    "common": {
+      "LeaveStatusBadge": {
+        "file": "components/common/LeaveStatusBadge.tsx",
+        "props": {
+          "status": "LeaveStatus"
+        },
+        "description": "Displays colored badge for leave request status"
+      },
+      "LeaveTypeChip": {
+        "file": "components/common/LeaveTypeChip.tsx",
+        "props": {
+          "leaveType": "LeaveType"
+        },
+        "description": "Displays leave type with colored chip"
+      }
+    },
+    "my-leaves": {
+      "LeaveBalanceCard": {
+        "file": "components/my-leaves/LeaveBalanceCard.tsx",
+        "props": {
+          "entitlement": "LeaveEntitlement",
+          "leaveType": "LeaveType"
+        },
+        "description": "Card showing leave balance with progress bar and breakdown"
+      },
+      "MyRequestsTable": {
+        "file": "components/my-leaves/MyRequestsTable.tsx",
+        "props": {
+          "requests": "LeaveRequest[]",
+          "onCancel": "(request: LeaveRequest) => void",
+          "loading": "boolean (optional)"
+        },
+        "description": "Table showing employee's leave requests with cancel action"
+      },
+      "RequestLeaveForm": {
+        "file": "components/my-leaves/RequestLeaveForm.tsx",
+        "props": {
+          "leaveTypes": "LeaveType[]",
+          "onSubmit": "(data: CreateLeaveRequestInput) => void",
+          "isSubmitting": "boolean"
+        },
+        "description": "Form for submitting new leave request with validation"
+      }
+    },
+    "hr": {
+      "AllRequestsTable": {
+        "file": "components/hr/AllRequestsTable.tsx",
+        "props": {
+          "requests": "LeaveRequest[]",
+          "loading": "boolean (optional)",
+          "onViewDetails": "(request: LeaveRequest) => void (optional)",
+          "onFinalize": "(request: LeaveRequest) => void (optional)",
+          "onOverride": "(request: LeaveRequest) => void (optional)",
+          "onFlagIrregular": "(request: LeaveRequest) => void (optional)"
+        },
+        "description": "HR admin table with finalize/override/flag actions"
+      },
+      "HrFinalizeModal": {
+        "file": "components/hr/HrDecisionModals/HrFinalizeModal.tsx",
+        "props": {
+          "isOpen": "boolean",
+          "requestId": "string",
+          "employeeName": "string",
+          "onClose": "() => void",
+          "onSuccess": "() => void (optional)"
+        },
+        "description": "Modal for HR to finalize approved leave request"
+      },
+      "HrOverrideModal": {
+        "file": "components/hr/HrDecisionModals/HrOverrideModal.tsx",
+        "props": {
+          "isOpen": "boolean",
+          "requestId": "string",
+          "employeeName": "string",
+          "onClose": "() => void",
+          "onSuccess": "() => void (optional)"
+        },
+        "description": "Modal for HR to override manager decision"
+      },
+      "FlagIrregularModal": {
+        "file": "components/hr/FlagIrregularModal.tsx",
+        "props": {
+          "isOpen": "boolean",
+          "requestId": "string",
+          "employeeName": "string",
+          "onClose": "() => void",
+          "onSuccess": "() => void (optional)"
+        },
+        "description": "Modal for flagging irregular leave pattern"
+      }
+    },
+    "team": {
+      "TeamRequestsTable": {
+        "file": "components/team/TeamRequestsTable.tsx",
+        "props": {
+          "requests": "LeaveRequest[]",
+          "loading": "boolean (optional)",
+          "onApprove": "(request: LeaveRequest) => void",
+          "onReject": "(request: LeaveRequest) => void"
+        },
+        "description": "Manager view of team requests with approve/reject actions"
+      },
+      "ApprovalModal": {
+        "file": "components/team/ApprovalModal.tsx",
+        "props": {
+          "isOpen": "boolean",
+          "request": "LeaveRequest",
+          "action": "'approve' | 'reject'",
+          "onClose": "() => void",
+          "onConfirm": "(data: { comments?: string, reason?: string }) => void"
+        },
+        "description": "Modal for manager to approve or reject request"
+      }
+    },
+    "modals": {
+      "RequestDetailsModal": {
+        "file": "components/modals/RequestDetailsModal.tsx",
+        "props": {
+          "isOpen": "boolean",
+          "request": "LeaveRequest",
+          "onClose": "() => void"
+        },
+        "description": "Modal showing full leave request details and approval history"
+      }
+    }
+  },
+  "pages": {
+    "/leaves": {
+      "file": "page.tsx",
+      "description": "Leave dashboard with overview stats and recent activity"
+    },
+    "/leaves/my-leaves": {
+      "file": "my-leaves/page.tsx",
+      "description": "Employee view: balances, request form, my requests history"
+    },
+    "/leaves/team": {
+      "file": "team/page.tsx",
+      "description": "Manager view: team balances, pending approvals, team history"
+    },
+    "/leaves/hr": {
+      "file": "hr/page.tsx",
+      "description": "HR admin view: all requests, finalize/override/flag actions, jobs"
+    },
+    "/leaves/entitlements": {
+      "file": "entitlements/page.tsx",
+      "description": "HR admin: assign and manage employee entitlements"
+    },
+    "/leaves/policies": {
+      "file": "policies/page.tsx",
+      "description": "HR admin: configure leave types and policies"
+    }
+  },
+  "api": {
+    "baseUrl": "http://localhost:5000",
+    "client": {
+      "file": "api/leaves.client.ts",
+      "description": "Axios instance with interceptors for auth and error handling"
+    },
+    "endpoints": {
+      "file": "api/leaves.endpoints.ts",
+      "description": "Centralized endpoint URL constants"
+    },
+    "functions": {
+      "getMyBalances": {
+        "file": "api/tracking.api.ts",
+        "endpoint": "GET /leaves/tracking/me/balances",
+        "returns": "Array<{ entitlement, leaveType, totalEntitlement, used, available, carriedOver }>"
+      },
+      "getMyRequests": {
+        "file": "api/requests.api.ts",
+        "endpoint": "GET /leaves/requests/me",
+        "returns": "LeaveRequest[]"
+      },
+      "submitLeaveRequest": {
+        "file": "api/requests.api.ts",
+        "endpoint": "POST /leaves/requests",
+        "params": "CreateLeaveRequestInput",
+        "returns": "LeaveRequest"
+      },
+      "cancelLeaveRequest": {
+        "file": "api/requests.api.ts",
+        "endpoint": "DELETE /leaves/requests/:id/cancel",
+        "params": "requestId: string",
+        "returns": "LeaveRequest"
+      },
+      "managerApprove": {
+        "file": "api/requests.api.ts",
+        "endpoint": "POST /leaves/requests/:id/manager-approve",
+        "params": "id: string, input: ManagerApprovalInput",
+        "returns": "LeaveRequest"
+      },
+      "managerReject": {
+        "file": "api/requests.api.ts",
+        "endpoint": "POST /leaves/requests/:id/manager-reject",
+        "params": "id: string, input: ManagerRejectionInput",
+        "returns": "LeaveRequest"
+      },
+      "hrFinalize": {
+        "file": "api/requests.api.ts",
+        "endpoint": "POST /leaves/requests/:id/hr-finalize",
+        "params": "id: string, input: HRFinalizeInput",
+        "returns": "LeaveRequest"
+      },
+      "hrOverride": {
+        "file": "api/requests.api.ts",
+        "endpoint": "POST /leaves/requests/:id/hr-override",
+        "params": "id: string, input: HROverrideInput",
+        "returns": "LeaveRequest"
+      },
+      "flagIrregular": {
+        "file": "api/tracking.api.ts",
+        "endpoint": "POST /leaves/tracking/flag-irregular",
+        "params": "requestId: string",
+        "returns": "LeaveRequest"
+      },
+      "assignEntitlement": {
+        "file": "api/entitlements.api.ts",
+        "endpoint": "POST /leaves/entitlements/assign",
+        "params": "PersonalizedEntitlementInput",
+        "returns": "LeaveEntitlement"
+      }
+    }
+  },
+  "utils": {
+    "dates": {
+      "file": "utils/dates.ts",
+      "functions": {
+        "formatDate": "Format ISO date to readable string",
+        "formatDuration": "Format duration in days to readable string",
+        "calculateWorkingDays": "Calculate working days between dates excluding weekends/holidays"
+      }
+    },
+    "permissions": {
+      "file": "utils/permissions.ts",
+      "functions": {
+        "canApproveRequest": "Check if user can approve request",
+        "canFinalizeRequest": "Check if user can finalize request",
+        "canCancelRequest": "Check if user can cancel request"
+      }
+    },
+    "request-status": {
+      "file": "utils/request-status.ts",
+      "functions": {
+        "getStatusColor": "Get color class for status",
+        "getStatusIcon": "Get icon for status",
+        "getStatusLabel": "Get display label for status"
+      }
+    }
+  },
+  "styling": {
+    "theme": {
+      "file": "leaves-theme.css",
+      "description": "CSS variables for leaves module theming",
+      "variables": {
+        "--leaves-primary": "#10B981",
+        "--leaves-secondary": "#059669",
+        "--leaves-100": "#D1FAE5",
+        "--leaves-200": "#A7F3D0",
+        "--leaves-600": "#059669",
+        "--leaves-700": "#047857"
+      }
+    },
+    "approach": "Inline styles with gradients, no Tailwind CSS. Custom animations in index.css"
+  },
+  "state": {
+    "reactQuery": {
+      "description": "TanStack React Query for server state management",
+      "queryKeys": {
+        "myBalances": "['leaves', 'my-balances', query]",
+        "myRequests": "['leaves', 'my-requests']",
+        "myHistory": "['leaves', 'my-history', filters]",
+        "allRequests": "['leaves', 'all-requests']",
+        "teamRequests": "['leaves', 'team-requests']",
+        "leaveTypes": "['leaves', 'types']",
+        "policies": "['leaves', 'policies']",
+        "entitlements": "['leaves', 'entitlements']"
+      },
+      "cacheTime": "5 minutes default",
+      "staleTime": "1 minute default"
+    }
+  },
+  "notes": {
+    "authentication": "JWT token stored in httpOnly cookie, automatically sent with requests",
+    "errorHandling": "Errors extracted from error.response.data.message and displayed to user",
+    "dateFormat": "All dates sent/received as ISO 8601 strings, converted for display",
+    "fieldMapping": "Backend yearlyEntitlement/taken/remaining mapped to totalEntitlement/used/available in API responses",
+    "queryInvalidation": "Mutations automatically invalidate related queries to keep data fresh",
+    "typeScript": "Full TypeScript coverage with strict mode enabled",
+    "linting": "ESLint with Next.js rules",
+    "formatting": "No Tailwind - all components use inline styles with CSS variables"
+  }
+}
