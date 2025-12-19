@@ -86,7 +86,10 @@ export class AuthController {
   @Roles() // Allow any authenticated user
   @UseGuards(JwtAuthGuard)
   async me(@Res() res: Response, @Body() body) {
+    console.log('[AuthController /me] Request user:', res.req.user);
     const userProfile = await this.authService.getUserProfile(res.req.user as unknown as any);
+    console.log('[AuthController /me] Returning profile:', userProfile);
+    console.log('[AuthController /me] Profile picture URL:', userProfile.profilePictureUrl);
     return res.send(userProfile);
   }
 }

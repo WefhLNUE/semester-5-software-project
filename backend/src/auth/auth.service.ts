@@ -209,15 +209,19 @@ export class AuthService {
         if (user.userType === UserType.EMPLOYEE) {
             const emp = await this.employeeModel.findById(user._id).select('profilePictureUrl firstName lastName workEmail mobilePhone').lean();
             console.log(`[AuthService] Found Employee:`, emp ? 'YES' : 'NO');
+            console.log(`[AuthService] Employee data:`, emp);
+            console.log(`[AuthService] Profile picture URL from DB:`, emp?.profilePictureUrl);
             const firstName = emp?.firstName || '';
             const lastName = emp?.lastName || '';
             const fullName = `${firstName} ${lastName}`.trim() || 'Employee';
 
-            return {
+            const result = {
                 ...user,
                 profilePictureUrl: emp?.profilePictureUrl || null,
                 name: fullName
             };
+            console.log(`[AuthService] Returning result:`, result);
+            return result;
         } else {
             const cand = await this.candidateModel.findById(user._id).select('profilePictureUrl firstName lastName personalEmail').lean();
             console.log(`[AuthService] Found Candidate:`, cand ? 'YES' : 'NO');
