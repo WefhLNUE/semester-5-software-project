@@ -182,9 +182,11 @@ export default function LoginPage() {
             Continue with Google
           </button>
 
-          <p className="signup-text">
-            Don't have an account? <a href="#" className="signup-link">Sign up</a>
-          </p>
+          {userType === 'candidate' && (
+            <p className="signup-text">
+              Don't have an account? <a href="/register" className="signup-link">Register</a>
+            </p>
+          )}
         </form>
       </div>
       

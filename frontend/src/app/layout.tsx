@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../../main-theme.css";
 import MenuBar from "@/components/MenuBar";
+import { Providers } from "./providers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,8 +37,10 @@ export default function RootLayout({
           color: "var(--text-primary)",
         }}
       >
-        <MenuBar />
-        <main>{children}</main>
+        <Providers>
+          <MenuBar />
+          <main>{children}</main>
+        </Providers>
       </body>
     </html>
   );

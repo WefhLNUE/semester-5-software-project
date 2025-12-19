@@ -13,6 +13,7 @@ import { Roles } from './decorator/roles.decorator';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { RegisterEmployeeDto } from '../employee-profile/dto/register-employee.dto';
+import { RegisterCandidateDto } from './dto/register-candidate.dto';
 
 
 
@@ -64,7 +65,7 @@ export class AuthController {
 
     console.log("Generated token:", accessToken);
 
-    return { message: 'Logged in successfully', userType: user.userType };
+    return { message: 'Logged in successfully', token: accessToken, userType: user.userType };
   }
 
 
@@ -77,7 +78,8 @@ export class AuthController {
   @Get('me')
   @Roles() // Allow any authenticated user
   @UseGuards(JwtAuthGuard)
-  me(@Res() res: Response, @Body() body) {
-    return res.send(res.req.user);
+  async me(@Res() res: Response, @Body() body) {
+    const userProfile = await this.authService.getUserProfile(res.req.user as unknown as any);
+    return res.send(userProfile);
   }
 }

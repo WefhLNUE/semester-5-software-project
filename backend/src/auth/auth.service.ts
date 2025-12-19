@@ -8,68 +8,98 @@ import { EmployeeProfile } from '../employee-profile/Models/employee-profile.sch
 import { EmployeeSystemRole } from '../employee-profile/Models/employee-system-role.schema';
 import { Candidate } from '../employee-profile/Models/candidate.schema';
 import { RegisterEmployeeDto } from '../employee-profile/dto/register-employee.dto';
+import { RegisterCandidateDto } from './dto/register-candidate.dto';
 import { EmployeeProfileService } from '../employee-profile/employee-profile.service';
 import { UserType } from './dto/login.dto';
+import { CandidateStatus } from '../employee-profile/enums/employee-profile.enums';
 
 type RoleDocument = HydratedDocument<EmployeeSystemRole>;
 
 // Common user type for login response
 export type AuthenticatedUser = {
-  _id: any;
-  workEmail?: string;
-  personalEmail?: string;
-  userType: UserType;
-  systemRole?: RoleDocument | null;
-  candidateNumber?: string;
-  employeeNumber?: string;
-  primaryDepartmentId?: any;
+    _id: any;
+    workEmail?: string;
+    personalEmail?: string;
+    userType: UserType;
+    systemRole?: RoleDocument | null;
+    candidateNumber?: string;
+    employeeNumber?: string;
+    primaryDepartmentId?: any;
 };
 
 @Injectable()
 export class AuthService {
     constructor(
-  private readonly jwtService: JwtService,
+        private readonly jwtService: JwtService,
 
-  @InjectModel(EmployeeProfile.name)
-  private readonly employeeModel: Model<EmployeeProfile>,
+        @InjectModel(EmployeeProfile.name)
+        private readonly employeeModel: Model<EmployeeProfile>,
 
-  @InjectModel(EmployeeSystemRole.name)
-  private readonly employeeRoleModel: Model<EmployeeSystemRole>,
+        @InjectModel(EmployeeSystemRole.name)
+        private readonly employeeRoleModel: Model<EmployeeSystemRole>,
 
-  @InjectModel(Candidate.name)
-  private readonly candidateModel: Model<Candidate>,
+        @InjectModel(Candidate.name)
+        private readonly candidateModel: Model<Candidate>,
 
-  private readonly employeeProfileService: EmployeeProfileService, // MUST be last
-) {}
+        private readonly employeeProfileService: EmployeeProfileService, // MUST be last
+    ) { }
 
 
     async register(dto: RegisterEmployeeDto) {
-    // create employee with auto-generated employeeNumber
-    const employee = await this.employeeProfileService.createEmployee(dto);
+        // create employee with auto-generated employeeNumber
+        const employee = await this.employeeProfileService.createEmployee(dto);
 
-    // attach system role
-    const roleDoc = await this.employeeRoleModel.create({
-        employeeProfileId: employee._id,
-        roles: dto.roles ?? [],
-        permissions: dto.permissions ?? [],
-    });
+        // attach system role
+        const roleDoc = await this.employeeRoleModel.create({
+            employeeProfileId: employee._id,
+            roles: dto.roles ?? [],
+            permissions: dto.permissions ?? [],
+        });
 
-    // sign jwt
-    const payload = {
-        id: employee._id,
-        workEmail: employee.workEmail,
-        roles: roleDoc.roles,
-        permissions: roleDoc.permissions,
-        employeeNumber: employee.employeeNumber,
-    };
+        // sign jwt
+        const payload = {
+            id: employee._id,
+            workEmail: employee.workEmail,
+            roles: roleDoc.roles,
+            permissions: roleDoc.permissions,
+            employeeNumber: employee.employeeNumber,
+        };
 
-    const accessToken = this.jwtService.sign(payload);
+        const accessToken = this.jwtService.sign(payload);
 
-    return {
-        accessToken,
-        user: employee,
-    };
-}
+        return {
+            accessToken,
+            user: employee,
+        };
+    }
+
+    async registerCandidate(dto: RegisterCandidateDto) {
+        const candidateNumber = `CAND-${Date.now()}`;
+
+        const candidate = await this.candidateModel.create({
+            ...dto,
+            candidateNumber,
+            applicationDate: new Date(),
+            status: CandidateStatus.APPLIED,
+            // GDPR: Record consent date when candidate registers
+            });
+
+        const payload = {
+            id: candidate._id.toString(),
+            workEmail: candidate.personalEmail,
+            roles: [],
+            permissions: [],
+            candidateNumber: candidate.candidateNumber,
+            userType: UserType.CANDIDATE,
+        };
+
+        const accessToken = this.jwtService.sign(payload);
+
+        return {
+            accessToken,
+            user: candidate,
+        };
+    }
 
 
 
@@ -159,5 +189,34 @@ export class AuthService {
             systemRole: null,
             candidateNumber: candidate.candidateNumber,
         };
+    }
+    async getUserProfile(user: AuthenticatedUser) {
+        console.log(`[AuthService] Fetching profile for user: ${user._id} type: ${user.userType}`);
+
+        if (user.userType === UserType.EMPLOYEE) {
+            const emp = await this.employeeModel.findById(user._id).select('profilePictureUrl firstName lastName workEmail mobilePhone').lean();
+            console.log(`[AuthService] Found Employee:`, emp ? 'YES' : 'NO');
+            const firstName = emp?.firstName || '';
+            const lastName = emp?.lastName || '';
+            const fullName = `${firstName} ${lastName}`.trim() || 'Employee';
+
+            return {
+                ...user,
+                profilePictureUrl: emp?.profilePictureUrl || null,
+                name: fullName
+            };
+        } else {
+            const cand = await this.candidateModel.findById(user._id).select('profilePictureUrl firstName lastName personalEmail').lean();
+            console.log(`[AuthService] Found Candidate:`, cand ? 'YES' : 'NO');
+            const firstName = cand?.firstName || '';
+            const lastName = cand?.lastName || '';
+            const fullName = `${firstName} ${lastName}`.trim() || 'Candidate';
+
+            return {
+                ...user,
+                profilePictureUrl: cand?.profilePictureUrl || null,
+                name: fullName
+            };
+        }
     }
 }

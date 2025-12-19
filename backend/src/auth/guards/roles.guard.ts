@@ -51,6 +51,17 @@ export class RolesGuard implements CanActivate {
     console.log("Normalized user roles:", userRoles);
     console.log("Normalized required roles:", required);
 
+    // Special case: Check for JOB_CANDIDATE role
+    // Candidates have userType: 'candidate' and empty roles array
+    const isCandidate = user?.userType === 'candidate' || 
+      (Array.isArray(user?.roles) && user.roles.length === 0);
+    const requiresCandidate = required.includes('job candidate');
+    
+    if (requiresCandidate && isCandidate) {
+      console.log("✔ Candidate access granted (userType check)");
+      return true;
+    }
+
     const hasRole = required.some(role => userRoles.includes(role));
 
     console.log("Has required role?", hasRole);

@@ -14,7 +14,7 @@ lerna-debug.log*
 
 # OS
 .DS_Store
-
+copilot-instructions.md
 # Tests
 /coverage
 /.nyc_output

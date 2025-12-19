@@ -11,6 +11,8 @@ type NavItem = {
   href: string;
   moduleColorVar?: string;
   requiresAuth?: boolean;
+  candidateOnly?: boolean;
+  employeeOnly?: boolean;
 };
 
 interface UserPayload {
@@ -18,28 +20,32 @@ interface UserPayload {
   workEmail?: string;
   personalEmail?: string;
   roles?: string[];
+  userType?: string;
 }
 
 const navItems: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Careers", href: "/recruitment/jobs/careers", moduleColorVar: "--recruitment", requiresAuth: false },
+  { label: "My Applications", href: "/recruitment/my-applications", moduleColorVar: "--recruitment", requiresAuth: true, candidateOnly: true },
   {
     label: "Employee Profile",
     href: "/employee-profile",
     moduleColorVar: "--employee-profile",
     requiresAuth: true,
+    employeeOnly: true,
   },
-  { label: "Leaves", href: "/leaves", moduleColorVar: "--leaves", requiresAuth: true },
+  { label: "Leaves", href: "/leaves", moduleColorVar: "--leaves", requiresAuth: true, employeeOnly: true },
   {
     label: "Organization",
     href: "/organization-structure",
     moduleColorVar: "--org-structure",
     requiresAuth: true,
+    employeeOnly: true,
   },
-  { label: "Performance", href: "/performance", moduleColorVar: "--performance", requiresAuth: true },
-  { label: "Time", href: "/time-management", moduleColorVar: "--time-management", requiresAuth: true },
-  { label: "Recruitment", href: "/recruitment", moduleColorVar: "--recruitment", requiresAuth: true },
-  { label: "Payroll", href: "/payroll-dashboard", moduleColorVar: "--payroll", requiresAuth: true },
+  { label: "Performance", href: "/performance", moduleColorVar: "--performance", requiresAuth: true, employeeOnly: true },
+  { label: "Time", href: "/time-management", moduleColorVar: "--time-management", requiresAuth: true, employeeOnly: true },
+  { label: "Recruitment", href: "/recruitment", moduleColorVar: "--recruitment", requiresAuth: true, employeeOnly: true },
+  { label: "Payroll", href: "/payroll-dashboard", moduleColorVar: "--payroll", requiresAuth: true, employeeOnly: true },
 ];
 
 function isActivePath(pathname: string, href: string) {
@@ -51,11 +57,13 @@ export default function MenuBar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<{ id: string; role: string; name?: string } | null>(null);
+  const [isCandidate, setIsCandidate] = useState(false);
+  const [user, setUser] = useState<{ id: string; role: string; name?: string; userType?: string } | null>(null);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
+    setIsCandidate(false);
     setUser(null);
     router.replace("/login");
   };
@@ -66,12 +74,30 @@ export default function MenuBar() {
     const tokenMarker = localStorage.getItem("token");
     if (tokenMarker) {
       setIsAuthenticated(true);
-      if (!user) {
-        setUser({
-          id: "placeholder",
-          role: "EMPLOYEE",
-          name: "Loading..."
-        });
+      
+      // Try to decode token to get userType for optimistic UI
+      try {
+        const decoded = jwtDecode<UserPayload & { userType?: string }>(tokenMarker);
+        const isCandidateUser = decoded.userType === 'candidate' || 
+          (Array.isArray(decoded.roles) && decoded.roles.length === 0);
+        setIsCandidate(isCandidateUser);
+        
+        if (!user) {
+          setUser({
+            id: decoded.id || "placeholder",
+            role: isCandidateUser ? "Candidate" : "EMPLOYEE",
+            name: "Loading...",
+            userType: decoded.userType
+          });
+        }
+      } catch {
+        if (!user) {
+          setUser({
+            id: "placeholder",
+            role: "EMPLOYEE",
+            name: "Loading..."
+          });
+        }
       }
     }
 
@@ -98,12 +124,18 @@ export default function MenuBar() {
             try {
               const userData = JSON.parse(text);
               const roleSource = userData.roles || userData.systemRole?.roles || [];
-              const userRole = Array.isArray(roleSource) && roleSource.length > 0 ? roleSource[0] : 'EMPLOYEE';
+              const userRole = Array.isArray(roleSource) && roleSource.length > 0 ? roleSource[0] : 'Candidate';
+              
+              // Check if user is a candidate
+              const isCandidateUser = userData.userType === 'candidate' || 
+                (Array.isArray(roleSource) && roleSource.length === 0);
+              setIsCandidate(isCandidateUser);
 
               setUser({
                 id: userData.id || userData._id || userData.sub,
                 role: userRole,
-                name: userData.name || userData.workEmail || userData.username || "User"
+                name: userData.name || userData.workEmail || userData.personalEmail || userData.username || "User",
+                userType: userData.userType
               });
               setIsAuthenticated(true);
               return;
@@ -117,6 +149,7 @@ export default function MenuBar() {
         if (res.status === 401 || res.status === 403) {
           console.warn("Session expired");
           setIsAuthenticated(false);
+          setIsCandidate(false);
           setUser(null);
           localStorage.removeItem("token");
           return;
@@ -140,7 +173,22 @@ export default function MenuBar() {
     }
   }, [pathname]);
 
-  const visibleNavItems = isAuthenticated ? navItems : navItems.filter((item) => !item.requiresAuth);
+  // Filter nav items based on authentication status and user type
+  const visibleNavItems = navItems.filter((item) => {
+    // Always show non-auth items
+    if (!item.requiresAuth) return true;
+    
+    // Must be authenticated for auth-required items
+    if (!isAuthenticated) return false;
+    
+    // Candidate-only items
+    if (item.candidateOnly && !isCandidate) return false;
+    
+    // Employee-only items (hide from candidates)
+    if (item.employeeOnly && isCandidate) return false;
+    
+    return true;
+  });
 
   return (
     <header
@@ -247,7 +295,7 @@ export default function MenuBar() {
               {user && (
                 <div
                   className="animate-fade-in hover-lift"
-                  onClick={() => router.push("/employee-profile")}
+                  onClick={() => router.push(isCandidate ? "/recruitment/my-applications" : "/employee-profile")}
                   style={{
                     display: "flex",
                     alignItems: "center",
