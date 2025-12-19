@@ -440,3 +440,8 @@
   .border-light { border-color: var(--border-light); }
   .border-medium { border-color: var(--border-medium); }
   .border-dark { border-color: var(--border-dark); }
+    /* Effects */
+  .btn-click-effect:active {
+    transform: scale(0.95);
+    transition: transform 0.1s;
+  }
