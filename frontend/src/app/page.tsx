@@ -81,8 +81,10 @@ export default function Home() {
               <Link href="/recruitment" className="btn-secondary">
                 Explore recruitment
               </Link>
+              <Link href="/performance" className="btn-secondary">
+                Performance Management
+              </Link>
             </div>
-
             <div
               style={{
                 display: "grid",
@@ -148,6 +150,14 @@ export default function Home() {
                 Keep candidates organized, move faster, and maintain visibility across stages.
               </div>
             </div>
+
+            <div className="stat-card" style={{ backgroundColor: "rgba(99, 102, 241, 0.1)", borderColor: "rgba(99, 102, 241, 0.2)", gridColumn: "1 / -1" }}>
+              <div style={{ fontSize: "0.75rem", fontWeight: 600, opacity: 0.9 }}>Performance Management</div>
+              <div style={{ marginTop: "0.5rem", fontSize: "1.5rem", fontWeight: 600 }}>Fair evaluations</div>
+              <div style={{ marginTop: "0.5rem", fontSize: "0.875rem", opacity: 0.9 }}>
+                Structured appraisals, manager reviews, and transparent feedback cycles.
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -194,9 +204,17 @@ export default function Home() {
               Create openings, track candidates, and move efficiently.
             </div>
           </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            <div style={{ color: "var(--performance)", fontSize: "0.875rem", fontWeight: 600 }}>
+              Performance
+            </div>
+            <div style={{ color: "var(--text-secondary)", fontSize: "0.875rem" }}>
+              Templates, cycles, evaluations, and dispute resolution.
+            </div>
+          </div>
         </div>
       </section>
-
       <footer
         style={{
           borderTop: "1px solid var(--border-light)",
@@ -235,6 +253,9 @@ export default function Home() {
             </Link>
             <Link href="/recruitment" style={{ color: "var(--text-link)" }}>
               Recruitment
+            </Link>
+            <Link href="/performance" style={{ color: "var(--text-link)" }}>
+              Performance
             </Link>
           </div>
         </div>
