@@ -40,11 +40,14 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     return {
       id: payload.id,
+      _id: payload.id, // Required by AuthenticatedUser type
       workEmail: payload.workEmail,
       roles: payload.roles ?? [],
       permissions: payload.permissions ?? [],
       primaryDepartmentId: payload.primaryDepartmentId,
       employeeNumber: payload.employeeNumber,
+      candidateNumber: payload.candidateNumber,
+      userType: payload.userType, // CRITICAL: Without this, getUserProfile queries wrong model!
     };
   }
 }
