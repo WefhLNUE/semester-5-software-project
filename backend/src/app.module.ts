@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { OrganizationStructureModule } from './organization-structure/organization-structure.module';
 import { EmployeeProfile, EmployeeProfileSchema } from './employee-profile/Models/employee-profile.schema';
 import { PayrollExecutionModule } from './payroll-execution/payroll-execution.module';
+import { PayrollConfigurationModule } from './payroll-configuration/payroll-configuration.module';
+import { PayrollTrackingModule } from './payroll-tracking/payroll-tracking.module';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -28,6 +30,8 @@ dotenv.config();
     RecruitmentModule,
     LeavesModule,
     PayrollExecutionModule,
+    PayrollConfigurationModule,
+    PayrollTrackingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

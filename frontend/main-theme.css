@@ -1,8 +1,9 @@
 /* ==========================================
    HR SYSTEM - PROFESSIONAL COLOR SCHEME
    ========================================== */
+@import "tailwindcss";
 
-   :root {
+:root {
     /* Primary Brand Colors */
     --primary-50: #eff6ff;
     --primary-100: #dbeafe;
