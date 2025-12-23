@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { User } from "lucide-react";
+import { Bell } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 
 type NavItem = {
@@ -85,7 +86,7 @@ export default function MenuBar() {
 
     // 2. Fetch User Data (Source of Truth)
     // Verify session with backend cookie and get actual user details.
-    const API_URL = "http://localhost:5000";
+    const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
     const fetchUser = async (retryCount = 0) => {
       try {
@@ -259,6 +260,23 @@ export default function MenuBar() {
 
           {isAuthenticated && (
             <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <Link
+                href="/time-management/notifications"
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  backgroundColor: "var(--bg-selected)",
+                  color: "var(--primary-700)",
+                  textDecoration: "none",
+                }}
+              >
+                <Bell size={20} />
+              </Link>
+
               <button
                 type="button"
                 onClick={handleLogout}
