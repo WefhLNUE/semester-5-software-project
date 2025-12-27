@@ -298,7 +298,7 @@ export default function MenuBar() {
               {user && (
                 <div
                   className="animate-fade-in hover-lift"
-                  onClick={() => router.push(isCandidate ? "/recruitment/my-applications" : "/employee-profile")}
+                  onClick={() => router.push(isCandidate ? "/recruitment/my-applications" : "/employee-profile?view=my-profile")}
                   style={{
                     display: "flex",
                     alignItems: "center",
