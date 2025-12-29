@@ -1,12 +1,13 @@
 'use client'; // Required for state and form handling
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { API_URL } from '@/lib/config';
 import './login.css';
 
 type UserType = 'employee' | 'candidate';
 
-export default function LoginPage() {
+function LoginPageContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState<UserType>('employee');
@@ -31,7 +32,7 @@ export default function LoginPage() {
 
     try {
       // Replace URL with your actual backend endpoint
-      const response = await fetch('http://localhost:5000/auth/login', {
+      const response = await fetch(`${API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +63,7 @@ export default function LoginPage() {
   // Handle Google OAuth
   const handleGoogleLogin = () => {
     // Redirect user to the backend Google Auth route
-    window.location.href = 'http://localhost:5000/api/auth/google';
+    window.location.href = `${API_URL}/api/auth/google`;
   };
   
   return (
@@ -195,4 +196,12 @@ export default function LoginPage() {
       </footer>
     </div>
   );
+}
+// Wrapper component with Suspense boundary
+export default function LoginPage() {
+    return (
+        <Suspense fallback={<div style={{ textAlign: 'center', padding: '3rem', color: 'var(--text-secondary)' }}>Loading...</div>}>
+            <LoginPageContent />
+        </Suspense>
+    );
 }

@@ -23,14 +23,31 @@ async function bootstrap() {
   );
 
   app.use(cookieParser());
+
+  // Configure CORS - use FRONTEND_URL from environment or allow all in development
+  const frontendUrl = process.env.FRONTEND_URL;
   app.enableCors({
-    origin: true,
+    origin: frontendUrl || true, // Use specific origin in production, allow all in development
     credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'Accept',
+      'Origin',
+      'Access-Control-Allow-Credentials',
+      'Access-Control-Allow-Headers',
+      'Access-Control-Allow-Methods',
+      'Access-Control-Allow-Origin',
+    ],
   });
 
   const port = process.env.PORT ?? 5000;
   await app.listen(port);
-  console.log(`🚀 Application is running on: http://localhost:${port}`);
+
+  const backendUrl = process.env.BACKEND_URL || `http://localhost:${port}`;
+  console.log(`🚀 Application is running on: ${backendUrl}`);
 
 }
 bootstrap();

@@ -1,6 +1,8 @@
 // Simple auth utility without React Context
 // Handles authentication checks using cookies
 
+import { API_URL } from '@/lib/config';
+
 export interface User {
   id: string;
   workEmail: string;
@@ -15,7 +17,7 @@ export interface User {
 // Check if user is authenticated by calling /auth/me
 export async function checkAuth(): Promise<User | null> {
   try {
-    const response = await fetch('http://localhost:5000/auth/me', {
+    const response = await fetch(`${API_URL}/auth/me`, {
       credentials: 'include',
     });
 
@@ -45,7 +47,7 @@ export function hasPermission(user: User | null, permission: string): boolean {
 // Logout user
 export async function logout(): Promise<void> {
   try {
-    await fetch('http://localhost:5000/auth/logout', {
+    await fetch(`${API_URL}/auth/logout`, {
       method: 'POST',
       credentials: 'include',
     });

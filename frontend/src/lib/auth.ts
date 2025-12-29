@@ -2,8 +2,9 @@
 // Supports both cookie-based auth (via /auth/me) and localStorage JWT token
 
 import { jwtDecode } from 'jwt-decode';
+import { API_URL } from './config';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000';
+const API_BASE_URL = API_URL;
 
 interface TokenPayload {
   id?: string;
