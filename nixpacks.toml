@@ -1,0 +1,16 @@
+[phases.setup]
+nixPkgs = ["nodejs_22", "git"]
+
+[phases.install]
+cmds = [
+    "cd backend",
+    "git config --global --add safe.directory '*'",
+    "cd .. && git submodule update --init --recursive || echo 'Git submodules not available'",
+    "cd backend && npm ci"
+]
+
+[phases.build]
+cmds = ["cd backend && npm run build"]
+
+[start]
+cmd = "cd backend && npm run start:prod"
