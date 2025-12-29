@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "postinstall": "cd .. && git submodule update --init --recursive || echo 'Git submodules already initialized or not available'",
+    "prebuild": "node check-submodules.js",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
