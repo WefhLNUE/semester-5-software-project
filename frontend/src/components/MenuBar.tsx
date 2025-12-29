@@ -28,6 +28,8 @@ const navItems: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Careers", href: "/recruitment/jobs/careers", moduleColorVar: "--recruitment", requiresAuth: false },
   { label: "My Applications", href: "/recruitment/my-applications", moduleColorVar: "--recruitment", requiresAuth: true, candidateOnly: true },
+  { label: "My Tracker", href: "/recruitment/tracker", moduleColorVar: "--recruitment", requiresAuth: true, candidateOnly: true },
+  { label: "Upload Documents", href: "/recruitment/uploadDoucment", moduleColorVar: "--recruitment", requiresAuth: true, candidateOnly: true },
   {
     label: "Employee Profile",
     href: "/employee-profile",
@@ -221,10 +223,16 @@ export default function MenuBar() {
               ? `var(${item.moduleColorVar})`
               : "var(--primary-700)";
 
+            // Handle dynamic tracker URL
+            let href = item.href;
+            if (item.href === "/recruitment/tracker" && user?.id) {
+              href = `/recruitment/tracker/${user.id}`;
+            }
+
             return (
               <Link
                 key={item.href}
-                href={item.href}
+                href={href}
                 style={{
                   textDecoration: "none",
                   borderRadius: "0.375rem",

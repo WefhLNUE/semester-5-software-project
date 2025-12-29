@@ -1,5 +1,35 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
 export default function Home() {
+  const router = useRouter();
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Fetch current user ID from localStorage or API
+    const fetchCurrentUser = async () => {
+      try {
+        // Check if there's a token to determine if user is logged in
+        const token = localStorage.getItem('token');
+        if (token) {
+          // You can fetch the user ID from an API call if needed
+          // For now, we'll check if user data exists in localStorage
+          const userData = localStorage.getItem('userId');
+          if (userData) {
+            setCurrentUserId(userData);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
   return (
     <div style={{ position: "relative" }}>
       <div
@@ -85,6 +115,74 @@ export default function Home() {
                 Performance Management
               </Link>
             </div>
+
+            {/* Candidate Quick Access Section */}
+            {currentUserId && (
+              <div style={{
+                marginTop: "2rem",
+                padding: "1.5rem",
+                borderRadius: "0.75rem",
+                border: "1px solid var(--border-light)",
+                backgroundColor: "rgba(255, 255, 255, 0.8)",
+                boxShadow: "var(--shadow-sm)"
+              }}>
+                <h3 style={{
+                  fontSize: "1.125rem",
+                  fontWeight: 600,
+                  marginBottom: "1rem",
+                  color: "var(--recruitment)"
+                }}>
+                  Candidate Portal
+                </h3>
+                <p style={{
+                  fontSize: "0.875rem",
+                  color: "var(--text-secondary)",
+                  marginBottom: "1rem"
+                }}>
+                  Quick access to your onboarding tasks and document uploads
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.75rem" }}>
+                  <button
+                    onClick={() => router.push(`/recruitment/tracker/${currentUserId}`)}
+                    style={{
+                      padding: "0.75rem 1.5rem",
+                      backgroundColor: "#3b82f6",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "0.5rem",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "background-color 0.2s",
+                      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#2563eb"}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#3b82f6"}
+                  >
+                    View My Tracker
+                  </button>
+                  <button
+                    onClick={() => router.push("/recruitment/uploadDoucment")}
+                    style={{
+                      padding: "0.75rem 1.5rem",
+                      backgroundColor: "#10b981",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "0.5rem",
+                      fontSize: "0.875rem",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      transition: "background-color 0.2s",
+                      boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)"
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#059669"}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#10b981"}
+                  >
+                    Upload Documents
+                  </button>
+                </div>
+              </div>
+            )}
             <div
               style={{
                 display: "grid",
